@@ -47,7 +47,20 @@ const Skeleton = () => (
 );
 
 const AppShell: React.FC = () => {
-  const { activeView } = useGrading();
+  const {
+  // Inject noindex meta tag for app routes
+  useEffect(() => {
+    let meta = document.querySelector('meta[name="robots"]');
+    if (!meta) {
+      meta = document.createElement('meta');
+      meta.name = 'robots';
+      document.head.appendChild(meta);
+    }
+    meta.content = 'noindex, nofollow';
+    return () => {
+      meta.content = 'index, follow';
+    };
+  }, []); activeView } = useGrading();
   const location = useLocation();
 
   return (
@@ -88,11 +101,9 @@ const AppWrapper: React.FC = () => {
   }, [initializeApp]);
 
   return (
-    <BrowserRouter>
-      <GradingProvider>
-        <AppShell />
-      </GradingProvider>
-    </BrowserRouter>
+    <GradingProvider>
+      <AppShell />
+    </GradingProvider>
   );
 };
 
@@ -112,6 +123,7 @@ const PublicRoutes: React.FC = () => {
 };
 
 // Root router - decides whether to show app or landing page
+// This component MUST be inside BrowserRouter to use useLocation()
 const RootRouter: React.FC = () => {
   const location = useLocation();
   const [showApp, setShowApp] = useState(false);
@@ -156,7 +168,9 @@ export default function App() {
   return (
     <ErrorBoundary>
       <ToastProvider>
-        <RootRouter />
+        <BrowserRouter>
+          <RootRouter />
+        </BrowserRouter>
       </ToastProvider>
     </ErrorBoundary>
   );

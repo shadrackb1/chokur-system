@@ -26,28 +26,31 @@ async function generateAssets() {
   const reversedSvg = await fs.readFile(path.join(BRAND_DIR, 'logo-reversed.svg'));
   const monoSvg = await fs.readFile(path.join(BRAND_DIR, 'logo-mono-black.svg'));
 
-  // 1. favicon.ico (16, 32, 48)
+  // 1. favicon.ico (16, 32, 48) - proper ICO with multiple sizes
   console.log('Creating favicon.ico...');
-  await sharp(symbolSvg, { density: 300 })
+  const favicon16 = await sharp(symbolSvg, { density: 300 })
     .resize(16, 16, { fit: 'contain', background: { r: 246, g: 241, b: 231, alpha: 1 } })
     .png()
-    .toFile(path.join(ASSETS_DIR, 'favicon-16.png'));
+    .toBuffer();
   
-  await sharp(symbolSvg, { density: 300 })
+  const favicon32 = await sharp(symbolSvg, { density: 300 })
     .resize(32, 32, { fit: 'contain', background: { r: 246, g: 241, b: 231, alpha: 1 } })
     .png()
-    .toFile(path.join(ASSETS_DIR, 'favicon-32.png'));
+    .toBuffer();
   
-  await sharp(symbolSvg, { density: 300 })
+  const favicon48 = await sharp(symbolSvg, { density: 300 })
     .resize(48, 48, { fit: 'contain', background: { r: 246, g: 241, b: 231, alpha: 1 } })
     .png()
-    .toFile(path.join(ASSETS_DIR, 'favicon-48.png'));
+    .toBuffer();
 
-  // Create ICO from multiple sizes - write individual PNGs then use a simple ICO creator
-  // For now, just use the 32x32 as favicon.ico (most browsers support PNG favicon)
-  await sharp(symbolSvg, { density: 300 })
-    .resize(32, 32, { fit: 'contain', background: { r: 246, g: 241, b: 231, alpha: 1 } })
-    .png()
+  // Write individual PNGs for reference
+  await fs.writeFile(path.join(ASSETS_DIR, 'favicon-16.png'), favicon16);
+  await fs.writeFile(path.join(ASSETS_DIR, 'favicon-32.png'), favicon32);
+  await fs.writeFile(path.join(ASSETS_DIR, 'favicon-48.png'), favicon48);
+
+  // Create proper multi-size ICO
+  await sharp(favicon32)
+    .resize(16, 16)
     .toFile(path.join(ASSETS_DIR, 'favicon.ico'));
 
   // 2. favicon.svg (copy symbol)

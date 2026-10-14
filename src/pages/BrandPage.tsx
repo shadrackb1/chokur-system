@@ -1,7 +1,20 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Logo } from '../components/brand/Logo';
 
 export default function BrandPage() {
+  // Inject noindex meta tag for this internal page
+  useEffect(() => {
+    let meta = document.querySelector('meta[name="robots"]');
+    if (!meta) {
+      meta = document.createElement('meta');
+      meta.name = 'robots';
+      document.head.appendChild(meta);
+    }
+    meta.content = 'noindex, nofollow';
+    return () => {
+      meta.content = 'index, follow';
+    };
+  }, []);
   return (
     <div className="min-h-screen bg-surface font-body">
       <nav className="fixed top-0 left-0 right-0 z-40 bg-surface-panel/95 backdrop-blur-sm border-b border-hairline">
