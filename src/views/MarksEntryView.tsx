@@ -20,6 +20,7 @@ export const MarksEntryView: React.FC = () => {
     activeExam,
     activeExamId,
     setActiveView,
+    classStats,
   } = useGrading();
 
   const { addToast } = useToast();
@@ -498,7 +499,7 @@ export const MarksEntryView: React.FC = () => {
                   {classAgg}
                 </td>
                 <td className="px-2 text-center">
-                  <GradeChip grade={rankings[0]?.meanGrade || 'B-'} />
+                  <GradeChip grade={classStats?.meanGrade || 'B-'} />
                 </td>
               </tr>
             </tfoot>

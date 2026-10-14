@@ -12,7 +12,7 @@ import {
   CalculationMethod,
 } from '../types';
 import { rankAllStudents, RankingInput } from '../lib/ranking';
-import { parseMarksCSV } from '../utils/grading';
+import { parseMarksCSV, parseCSVLine } from '../utils/grading';
 import {
   schoolConfigRepo,
   studentsRepo,
@@ -22,6 +22,7 @@ import {
   classesRepo,
   settingsRepo,
   schemaVersionRepo,
+  syncQueueRepo,
   clearAllData,
   getDB,
 } from '../lib/db';
@@ -446,11 +447,11 @@ export const useAppStore = create<AppState>()(
       },
 
       importStudentsFromCSV: async (csvContent) => {
-        // Parse CSV and add students
+        // Parse CSV and add students - uses parseCSVLine for quoted field support
         const lines = csvContent.split(/\r?\n/).filter(l => l.trim());
         if (lines.length < 2) return { success: 0, errors: ['Empty CSV'] };
 
-        const headers = lines[0].split(',').map(h => h.trim().toLowerCase());
+        const headers = parseCSVLine(lines[0]).map(h => h.trim().toLowerCase());
         const admIdx = headers.findIndex(h => h.includes('adm'));
         const nameIdx = headers.findIndex(h => h.includes('name'));
 
@@ -463,7 +464,7 @@ export const useAppStore = create<AppState>()(
         const existingAdmNos = new Set(get().students.map(s => s.admNo.toLowerCase()));
 
         for (let i = 1; i < lines.length; i++) {
-          const cols = lines[i].split(',').map(c => c.trim());
+          const cols = parseCSVLine(lines[i]).map(c => c.trim());
           if (cols.length <= Math.max(admIdx, nameIdx)) continue;
 
           const admNo = cols[admIdx];
@@ -590,11 +591,13 @@ export const useAppStore = create<AppState>()(
 
       // Marks mutations
         updateMark: async (examId, studentId, subjectCode, value) => {
-          const currentMarks = get().marks[examId]?.[studentId] || {};
-          const newMarks = { ...currentMarks, [subjectCode]: value };
+          // Read current marks from DB for this specific student/exam
+          const existingRecord = await marksRepo.get(examId, studentId);
+          const newMarks = { ...(existingRecord?.marks || {}), [subjectCode]: value };
 
           await marksRepo.set(examId, studentId, newMarks);
 
+          // Update local state atomically using set() with current state
           set(state => {
             const newMarksState = { ...state.marks };
             if (!newMarksState[examId]) newMarksState[examId] = {};
@@ -608,11 +611,15 @@ export const useAppStore = create<AppState>()(
         },
 
       batchUpdateMarks: async (examId, updates) => {
+        // Read all existing marks from DB for this exam
+        const existingMarks = await marksRepo.getByExam(examId);
+        const existingMarksMap = new Map(existingMarks.map(m => [m.studentId, m.marks]));
+
         const entries = updates.map(u => ({
           examId,
           studentId: u.studentId,
           marks: {
-            ...(get().marks[examId]?.[u.studentId] || {}),
+            ...(existingMarksMap.get(u.studentId) || {}),
             [u.subjectCode]: u.value,
           },
         }));
@@ -744,8 +751,8 @@ export const useAppStore = create<AppState>()(
 
       pendingSyncCount: 0,
       refreshSyncCount: async () => {
-        // Would query syncQueueRepo
-        set({ pendingSyncCount: 0 });
+        const pending = await syncQueueRepo.getPending();
+        set({ pendingSyncCount: pending.length });
       },
     }),
     {

@@ -105,20 +105,20 @@ export function getGradeFromScore(score: MarkValue): GradeResult {
 
 export function getGradeFromPoints(points: number): KCSEGrade {
   // Points are 1-12, mean points can be decimal
-  // Round to nearest 0.5 for grade boundaries
-  const rounded = Math.round(points * 2) / 2;
+  // Use 2 decimal precision per KNEC standard
+  const precise = Math.round(points * 100) / 100;
 
-  if (rounded >= 11.5) return 'A';
-  if (rounded >= 10.5) return 'A-';
-  if (rounded >= 9.5) return 'B+';
-  if (rounded >= 8.5) return 'B';
-  if (rounded >= 7.5) return 'B-';
-  if (rounded >= 6.5) return 'C+';
-  if (rounded >= 5.5) return 'C';
-  if (rounded >= 4.5) return 'C-';
-  if (rounded >= 3.5) return 'D+';
-  if (rounded >= 2.5) return 'D';
-  if (rounded >= 1.5) return 'D-';
+  if (precise >= 11.5) return 'A';
+  if (precise >= 10.5) return 'A-';
+  if (precise >= 9.5) return 'B+';
+  if (precise >= 8.5) return 'B';
+  if (precise >= 7.5) return 'B-';
+  if (precise >= 6.5) return 'C+';
+  if (precise >= 5.5) return 'C';
+  if (precise >= 4.5) return 'C-';
+  if (precise >= 3.5) return 'D+';
+  if (precise >= 2.5) return 'D';
+  if (precise >= 1.5) return 'D-';
   return 'E';
 }
 

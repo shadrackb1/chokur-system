@@ -80,24 +80,6 @@ const AppLayout: React.FC = () => {
   );
 };
 
-// App routes with layout
-const AppRoutes: React.FC = () => {
-  return (
-    <Route element={<AppLayout />}>
-      <Route path="/overview" element={<OverviewView />} />
-      <Route path="/marks-entry" element={<MarksEntryView />} />
-      <Route path="/rankings" element={<RankingsView />} />
-      <Route path="/subject-analysis" element={<SubjectAnalysisView />} />
-      <Route path="/grade-distribution" element={<GradeDistributionView />} />
-      <Route path="/report-cards" element={<ReportCardsView />} />
-      <Route path="/students" element={<StudentsClassesView />} />
-      <Route path="/settings" element={<SettingsView />} />
-      <Route path="/app/*" element={<Navigate to="/overview" replace />} />
-      <Route index element={<Navigate to="/overview" replace />} />
-    </Route>
-  );
-};
-
 // Initialize app effect
 const InitializeApp: React.FC = () => {
   const initializeApp = useAppStore(state => state.initializeApp);

@@ -18,6 +18,13 @@ interface GradingContextType {
   setActiveExam: (exam: string) => Promise<void>;
   schoolConfig: SchoolConfig;
   updateSchoolConfig: (config: Partial<SchoolConfig>) => Promise<void>;
+  classStats: {
+    classAverage: number;
+    passRate: number;
+    meanGrade: string;
+    highestAggregate: number;
+    lowestAggregate: number;
+  };
   students: Student[];
   subjects: Subject[];
   marks: Record<string, Record<string, MarkValue>>; // [studentId][subjectCode] for active exam
@@ -50,28 +57,13 @@ const GradingContext = createContext<GradingContextType | undefined>(undefined);
 export const GradingProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const store = useAppStore();
 
-  // Sync active class/exam from store to local state for backward compatibility
-  const [activeStream, setActiveStream] = React.useState<string>('Form 4 East');
-  const [activeExam, setActiveExam] = React.useState<string>('End-term Exam, Term 2 2026');
-
-  // Update stream/exam when store changes
-  useEffect(() => {
-    if (store.activeClassId) {
-      const classRecord = store.classes.find(c => c.id === store.activeClassId);
-      if (classRecord && classRecord.stream !== activeStream) {
-        setActiveStream(classRecord.stream);
-      }
-    }
-  }, [store.activeClassId, store.classes]);
-
-  useEffect(() => {
-    if (store.activeExamId) {
-      const exam = store.exams.find(e => e.id === store.activeExamId);
-      if (exam && exam.name !== activeExam) {
-        setActiveExam(exam.name);
-      }
-    }
-  }, [store.activeExamId, store.exams]);
+  // Derive activeStream/activeExam from store directly - no local state needed
+  const activeStream = store.activeClassId
+    ? store.classes.find(c => c.id === store.activeClassId)?.stream || ''
+    : '';
+  const activeExam = store.activeExamId
+    ? store.exams.find(e => e.id === store.activeExamId)?.name || ''
+    : '';
 
   // Wrapper functions for backward compatibility
   const setActiveView = (view: ViewType) => store.setActiveView(view);
@@ -121,7 +113,7 @@ export const GradingProvider: React.FC<{ children: React.ReactNode }> = ({ child
       value={{
         activeView: store.activeView,
         setActiveView,
-        selectedStudentId: store.selectedStudentId || '',
+        selectedStudentId: store.selectedStudentId,
         setSelectedStudentId,
         activeStream,
         setActiveStream: setActiveStreamWrapper,
@@ -151,6 +143,7 @@ export const GradingProvider: React.FC<{ children: React.ReactNode }> = ({ child
         passRate: store.classStats.passRate,
         meanGrade: store.classStats.meanGrade,
         studentsRanked: store.filteredStudents.length,
+        classStats: store.classStats,
         subjectDepartmentalStats: store.subjectStats,
         gradeDistributionTiers: store.gradeDistribution,
         nearTheLineStudents: store.nearTheLineStudents,

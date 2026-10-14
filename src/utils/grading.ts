@@ -14,7 +14,7 @@ export interface ParsedCSVResult {
 }
 
 // Split CSV line respecting quotation marks
-function parseCSVLine(line: string, delimiter: string = ','): string[] {
+export function parseCSVLine(line: string, delimiter: string = ','): string[] {
   const result: string[] = [];
   let current = '';
   let inQuotes = false;
@@ -156,12 +156,19 @@ export function parseMarksCSV(
 
     if (!admVal && !nameVal) continue;
 
-    // Locate student in store
-    const matchedStudent = students.find((s) => {
-      if (admVal && s.admNo.toLowerCase() === admVal.toLowerCase()) return true;
-      if (nameVal && s.name.toLowerCase() === nameVal.toLowerCase()) return true;
-      return false;
-    });
+    // Locate student in store - prioritize admNo, fallback to name with warning
+    const matchedByAdmNo = admVal && students.find(s => s.admNo.toLowerCase() === admVal.toLowerCase());
+    const matchedByName = nameVal && !matchedByAdmNo && students.find(s => s.name.toLowerCase() === nameVal.toLowerCase());
+
+    if (!matchedByAdmNo && matchedByName) {
+      // Check for ambiguous name matches
+      const nameMatches = students.filter(s => s.name.toLowerCase() === nameVal.toLowerCase());
+      if (nameMatches.length > 1) {
+        warnings.push(`Row ${r}: Name "${nameVal}" matches ${nameMatches.length} students. Using first match (AdmNo: ${nameMatches[0].admNo}).`);
+      }
+    }
+
+    const matchedStudent = matchedByAdmNo || matchedByName;
 
     if (!matchedStudent) {
       unmatchedStudents.push(admVal ? `Adm: ${admVal} (${nameVal || 'No name'})` : nameVal);
@@ -175,8 +182,11 @@ export function parseMarksCSV(
         const cellRaw = rowCells[colIdx].trim();
         const upper = cellRaw.toUpperCase();
 
-        if (upper === 'ABS' || upper === 'A' || upper === 'ABSENT') {
+        if (upper === 'ABS' || upper === 'ABSENT') {
           studentMarks[subjectCode] = 'ABS';
+        } else if (upper === 'A') {
+          // 'A' is a valid KCSE grade (80-100), not absent
+          studentMarks[subjectCode] = 80;
         } else if (cellRaw === '' || cellRaw === '-' || cellRaw === '—') {
           // do not overwrite if blank, or set null
         } else {

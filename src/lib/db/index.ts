@@ -184,12 +184,15 @@ export async function getDB(): Promise<IDBPDatabase<ChokurDBSchema>> {
         const schemaVersionStore = db.createObjectStore('schemaVersion', { keyPath: 'id' });
       }
 
-      // Version 2: Add missing indexes and fix marks key
+      // Version 2: Add missing indexes and fix syncQueue indexes
       if (oldVersion < 2) {
-        // Marks store already has composite key, ensure indexes exist
-        if (!db.objectStoreNames.contains('syncQueue')) {
-          const syncQueueStore = db.createObjectStore('syncQueue', { keyPath: 'id', autoIncrement: true });
-          syncQueueStore.createIndex('by-status', 'status');
+        // Fix syncQueue indexes - ensure by-timestamp index uses correct keyPath 'createdAt'
+        if (db.objectStoreNames.contains('syncQueue')) {
+          const syncQueueStore = transaction.objectStore('syncQueue');
+          // Drop and recreate index with correct keyPath
+          if (syncQueueStore.indexNames.contains('by-timestamp')) {
+            syncQueueStore.deleteIndex('by-timestamp');
+          }
           syncQueueStore.createIndex('by-timestamp', 'createdAt');
         }
       }
@@ -335,6 +338,10 @@ export const marksRepo = {
   async get(examId: string, studentId: string): Promise<MarksRecord | undefined> {
     const db = await getDB();
     return db.get('marks', [examId, studentId]);
+  },
+  async getAll(): Promise<MarksRecord[]> {
+    const db = await getDB();
+    return db.getAll('marks');
   },
   async set(examId: string, studentId: string, marks: Record<string, number | 'ABS' | null>): Promise<void> {
     const db = await getDB();
