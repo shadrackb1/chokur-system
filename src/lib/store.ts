@@ -574,13 +574,13 @@ export const useAppStore = create<AppState>()(
       },
 
       removeClass: async (classId) => {
+        const classToDelete = get().classes.find(c => c.id === classId);
+        const stream = classToDelete?.stream || '';
         await classesRepo.delete(classId);
-        const deletedStudents = await studentsRepo.deleteByStream(
-          get().classes.find(c => c.id === classId)?.stream || ''
-        );
+        if (stream) await studentsRepo.deleteByStream(stream);
         set(state => ({
           classes: state.classes.filter(c => c.id !== classId),
-          students: state.students.filter(s => s.stream !== get().classes.find(c => c.id === classId)?.stream),
+          students: state.students.filter(s => s.stream !== stream),
         }));
         if (get().activeClassId === classId) {
           set({ activeClassId: null, activeExamId: null });
@@ -848,7 +848,7 @@ async function loadFromDB(): Promise<void> {
     subjectsRepo.getAll(),
     examsRepo.getAll(),
     classesRepo.getAll(),
-    marksRepo.getByExam('exam-1'), // Load marks for default exam
+    marksRepo.getAll(), // Load ALL marks for all exams
   ]);
 
   const store = useAppStore.getState();
