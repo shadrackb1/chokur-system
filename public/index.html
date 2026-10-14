@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="en-KE" class="h-full">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Chokur System — Marks to decisions, instantly.</title>
+    <meta name="description" content="Chokur System: Kenyan secondary school marks entry, KCSE grading, class rankings, subject analysis, and printable report cards. Works offline." />
+    <meta name="theme-color" content="#F6F1E7" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <meta name="apple-mobile-web-app-title" content="Chokur" />
+    <link rel="canonical" href="https://chokur.system/" />
+
+    <!-- Favicon & Icons -->
+    <link rel="icon" type="image/svg+xml" href="/brand/favicon.svg" />
+    <link rel="icon" type="image/x-icon" href="/brand/favicon.ico" />
+    <link rel="apple-touch-icon" href="/brand/apple-touch-icon.png" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <link rel="mask-icon" href="/brand/safari-pinned-tab.svg" color="#C2410C" />
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Chokur System — Marks to decisions, instantly." />
+    <meta property="og:description" content="Enter marks once. Chokur grades on the KCSE scale, ranks your class, analyses every subject and prints report cards automatically. Works offline." />
+    <meta property="og:image" content="/brand/og-image.png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:url" content="https://chokur.system/" />
+    <meta property="og:site_name" content="Chokur System" />
+    <meta property="og:locale" content="en_KE" />
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Chokur System — Marks to decisions, instantly." />
+    <meta name="twitter:description" content="Enter marks once. Chokur grades on the KCSE scale, ranks your class, analyses every subject and prints report cards automatically. Works offline." />
+    <meta name="twitter:image" content="/brand/og-image.png" />
+
+    <!-- Structured Data -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "SoftwareApplication",
+      "name": "Chokur System",
+      "applicationCategory": "EducationalApplication",
+      "operatingSystem": "Any (Web, PWA)",
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "KES",
+        "availability": "https://schema.org/InStock"
+      },
+      "description": "Kenyan secondary school marks-to-insight tool: KCSE grading, class rankings, subject analysis, and printable report cards. Works offline.",
+      "featureList": [
+        "KCSE 12-point grading",
+        "Best-7 aggregate calculation",
+        "Class rankings with C+ qualification line",
+        "Subject analysis with trend comparison",
+        "Printable A4 report cards",
+        "CSV/JSON export",
+        "Offline-first (IndexedDB + Service Worker)",
+        "Responsive on phone, tablet, desktop"
+      ],
+      "author": {
+        "@type": "Organization",
+        "name": "Chokur System"
+      },
+      "inLanguage": "en-KE"
+    }
+    </script>
+
+    <!-- Fonts (self-hosted in production, Google Fonts for dev) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
+
+    <!-- Service Worker Registration -->
+    <script>
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+          navigator.serviceWorker.register('/sw.js').then((registration) => {
+            console.log('SW registered:', registration.scope);
+          }).catch((error) => {
+            console.log('SW registration failed:', error);
+          });
+        });
+      }
+    </script>
+    <script type="module" crossorigin src="/assets/index-Cpk6ro5C.js"></script>
+    <link rel="stylesheet" crossorigin href="/assets/index-C5I0-H7C.css">
+  </head>
+  <body class="bg-surface text-primary antialiased min-h-full font-sans">
+    <div id="root"></div>
+  </body>
+</html>
