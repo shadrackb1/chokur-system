@@ -1,0 +1,40 @@
+{
+  "id": "/",
+  "name": "Chokur System — Academic Grading & Report Cards",
+  "short_name": "Chokur",
+  "description": "Kenyan secondary school KCSE grading ledger, spreadsheet marks entry, rankings, and official report cards.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#FEF9EF",
+  "theme_color": "#FEF9EF",
+  "icons": [
+    {
+      "src": "/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
+    {
+      "src": "/icon.svg",
+      "sizes": "512x512",
+      "type": "image/svg+xml",
+      "purpose": "maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Enter Marks",
+      "short_name": "Marks",
+      "description": "Open spreadsheet marks entry ledger",
+      "url": "/#marks-entry"
+    },
+    {
+      "name": "Merit Rankings",
+      "short_name": "Rankings",
+      "description": "View class rankings and university pass rates",
+      "url": "/#rankings"
+    }
+  ]
+}

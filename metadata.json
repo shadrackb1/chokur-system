@@ -1,0 +1,7 @@
+{
+  "name": "Chokur System - Academic Grading Ledger",
+  "description": "High-fidelity Kenyan secondary school (KCSE) academic grading ledger, spreadsheet marks entry, rankings, subject analysis, and official printable report cards.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
+
