@@ -62,6 +62,8 @@ export interface StudentCalculation {
   strongestSubject?: { code: string; score: number };
   weakestSubject?: { code: string; score: number };
   qualifies: boolean;      // Mean Points >= 7.0 (Grade C+ and above)
+  subjectsEntered: number; // Number of subjects with numeric marks
+  subjectsUsed: number;    // Number of subjects used in aggregate (7 for best7, all for simpleMean)
 }
 
 export interface SchoolConfig {
@@ -82,7 +84,7 @@ export interface SubjectDepartmentalStat {
   average: number;
   highest: number;
   lowest: number;
-  passRate: number; // percentage of students >= 50
+  passRate: number; // percentage of students >= 55 (C+)
   entered: number;
   diffFromLastExam: number; // e.g. +3.2 or -1.8
 }
@@ -93,4 +95,23 @@ export interface GradeDistributionTier {
   studentCount: number;
   cohortShare: number; // percentage e.g. 16.7
   cumulativePercentage: number;
+}
+
+export interface Exam {
+  id: string;
+  name: string;
+  classId: string;
+  term: string;
+  academicYear: string;
+  date: string;
+  subjectIds: string[];
+  isActive: boolean;
+}
+
+export interface Class {
+  id: string;
+  name: string;
+  stream: string;
+  teacherId: string;
+  studentIds: string[];
 }

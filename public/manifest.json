@@ -1,0 +1,27 @@
+{
+  "name": "Chokur System",
+  "short_name": "Chokur",
+  "description": "KCSE Academic Grading Ledger for Kenyan Secondary Schools",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#FEF9EF",
+  "theme_color": "#C2410C",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["education", "productivity"],
+  "lang": "en-KE",
+  "dir": "ltr"
+}
