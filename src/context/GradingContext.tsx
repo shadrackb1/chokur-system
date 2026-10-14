@@ -1,6 +1,7 @@
-import React, { createContext, useContext, useEffect, useMemo } from 'react';
+import React, { createContext, useContext, useEffect } from 'react';
 import { useAppStore } from '../lib/store';
 import { ViewType } from '../types';
+import { MarkValue, KCSEGrade, Student, Subject, StudentCalculation, SchoolConfig, SubjectDepartmentalStat, GradeDistributionTier } from '../types';
 
 interface GradingContextType {
   activeView: ViewType;
@@ -11,31 +12,35 @@ interface GradingContextType {
   setActiveClassId: (id: string | null) => void;
   activeExamId: string | null;
   setActiveExamId: (id: string | null) => void;
-  schoolConfig: any;
-  updateSchoolConfig: (config: Partial<any>) => Promise<void>;
-  students: any[];
-  subjects: any[];
-  marks: Record<string, Record<string, any>>;
-  updateMark: (examId: string, studentId: string, subjectCode: string, value: any) => Promise<void>;
-  batchUpdateMarks: (examId: string, updates: Array<{ studentId: string; subjectCode: string; value: any }>) => Promise<void>;
+  activeStream: string;
+  setActiveStream: (stream: string) => Promise<void>;
+  activeExam: string;
+  setActiveExam: (exam: string) => Promise<void>;
+  schoolConfig: SchoolConfig;
+  updateSchoolConfig: (config: Partial<SchoolConfig>) => Promise<void>;
+  students: Student[];
+  subjects: Subject[];
+  marks: Record<string, Record<string, MarkValue>>; // [studentId][subjectCode] for active exam
+  updateMark: (studentId: string, subjectCode: string, value: MarkValue) => Promise<void>;
+  batchUpdateMarks: (updates: Array<{ studentId: string; subjectCode: string; value: MarkValue }>) => Promise<void>;
   importMarksFromCSV: (examId: string, csvContent: string) => Promise<any>;
   downloadMarksTemplateCSV: () => void;
-  addStudent: (student: Omit<any, 'id'>) => Promise<string>;
-  updateStudent: (student: any) => Promise<void>;
+  addStudent: (student: Omit<Student, 'id'>) => Promise<string>;
+  updateStudent: (student: Student) => Promise<void>;
   removeStudent: (studentId: string) => Promise<void>;
   resetToDemoData: () => Promise<void>;
   exportJSONBackup: () => Promise<void>;
   restoreJSONBackup: (jsonString: string) => Promise<boolean>;
 
   // Computed data
-  rankings: any[];
+  rankings: StudentCalculation[];
   classAverage: number;
   passRate: number;
   meanGrade: string;
   studentsRanked: number;
-  subjectDepartmentalStats: any[];
-  gradeDistributionTiers: any[];
-  nearTheLineStudents: any[];
+  subjectDepartmentalStats: SubjectDepartmentalStat[];
+  gradeDistributionTiers: GradeDistributionTier[];
+  nearTheLineStudents: StudentCalculation[];
   strongestSubject?: { name: string; average: number };
   weakestSubject?: { name: string; average: number };
 }
@@ -71,12 +76,14 @@ export const GradingProvider: React.FC<{ children: React.ReactNode }> = ({ child
   // Wrapper functions for backward compatibility
   const setActiveView = (view: ViewType) => store.setActiveView(view);
   const setSelectedStudentId = (id: string | null) => store.setSelectedStudentId(id);
+  
   const setActiveStreamWrapper = async (stream: string) => {
     const classRecord = store.classes.find(c => c.stream === stream);
     if (classRecord) {
       await store.setActiveClassId(classRecord.id);
     }
   };
+  
   const setActiveExamWrapper = async (examName: string) => {
     const exam = store.exams.find(e => e.name === examName && e.classId === store.activeClassId);
     if (exam) {
@@ -84,33 +91,32 @@ export const GradingProvider: React.FC<{ children: React.ReactNode }> = ({ child
     }
   };
 
-  const updateSchoolConfig = async (config: Partial<any>) => {
+  const updateSchoolConfig = async (config: Partial<SchoolConfig>) => {
     await store.setSchoolConfig(config);
   };
 
-  const updateMark = async (studentId: string, subjectCode: string, value: any) => {
+  const updateMark = async (studentId: string, subjectCode: string, value: MarkValue) => {
     if (!store.activeExamId) return;
     await store.updateMark(store.activeExamId, studentId, subjectCode, value);
   };
 
-  const batchUpdateMarks = async (updates: Array<{ studentId: string; subjectCode: string; value: any }>) => {
+  const batchUpdateMarks = async (updates: Array<{ studentId: string; subjectCode: string; value: MarkValue }>) => {
     if (!store.activeExamId) return;
     await store.batchUpdateMarks(store.activeExamId, updates);
   };
 
-  const importMarksFromCSV = async (csvContent: string) => {
-    if (!store.activeExamId) return { success: false, updates: [], errors: ['No active exam'] };
-    return store.importMarksFromCSV(store.activeExamId, csvContent);
+  const importMarksFromCSV = async (examId: string, csvContent: string) => {
+    return store.importMarksFromCSV(examId, csvContent);
   };
 
   const downloadMarksTemplateCSV = () => {
     // Use the store's filtered students and subjects
     const { filteredStudents, subjects, activeExamId } = store;
     if (!activeExamId) return;
-    
-    // This would need the export function from the old grading.ts
-    // For now, we'll keep a reference to the old function
   };
+
+  // Get marks for active exam as studentId -> subjectCode -> MarkValue
+  const activeExamMarks = store.activeExamId ? store.marks[store.activeExamId] || {} : {};
 
   return (
     <GradingContext.Provider
@@ -123,11 +129,15 @@ export const GradingProvider: React.FC<{ children: React.ReactNode }> = ({ child
         setActiveStream: setActiveStreamWrapper,
         activeExam,
         setActiveExam: setActiveExamWrapper,
+        activeClassId: store.activeClassId,
+        setActiveClassId: store.setActiveClassId,
+        activeExamId: store.activeExamId,
+        setActiveExamId: store.setActiveExamId,
         schoolConfig: store.schoolConfig,
         updateSchoolConfig,
         students: store.students,
         subjects: store.subjects,
-        marks: store.activeExamId ? store.marks[store.activeExamId] || {} : {},
+        marks: activeExamMarks,
         updateMark,
         batchUpdateMarks,
         importMarksFromCSV,

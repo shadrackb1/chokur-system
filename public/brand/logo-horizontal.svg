@@ -1,0 +1,58 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 64" width="240" height="64" role="img">
+  <title>Chokur System</title>
+  <!-- Symbol (64x64) -->
+  <g transform="translate(0, 0)">
+    <rect x="8" y="12" width="40" height="4" fill="#111111" rx="2"/>
+    <rect x="8" y="28" width="30" height="4" fill="#111111" rx="2"/>
+    <rect x="8" y="44" width="20" height="4" fill="#C2410C" rx="2"/>
+  </g>
+  
+  <!-- Wordmark "Chokur" - simplified paths, no fill on group -->
+  <g transform="translate(80, 0)" stroke="#111111" stroke-width="5" stroke-linecap="round" fill="none">
+    <!-- C -->
+    <path d="M0 12 C0 8 4 4 8 4 H20 C24 4 28 8 28 12 V52 C28 56 24 60 20 60 H8 C4 60 0 56 0 52 Z M0 12 V52"/>
+    <path d="M8 4 H20"/>
+    <path d="M8 60 H20"/>
+    
+    <!-- h -->
+    <path d="M30 4 V52"/>
+    <path d="M30 32 C30 28 34 24 38 24 H48 C52 24 56 28 56 32 V52"/>
+    
+    <!-- o -->
+    <path d="M62 32 C62 24 68 18 76 18 C84 18 90 24 90 32 C90 40 84 46 76 46 C68 46 62 40 62 32 Z"/>
+    
+    <!-- k -->
+    <path d="M96 4 V52"/>
+    <path d="M96 28 L106 14"/>
+    <path d="M96 28 L106 42"/>
+    
+    <!-- u -->
+    <path d="M112 12 V48 C112 52 116 56 120 56 H128 C132 56 136 52 136 48 V12"/>
+    
+    <!-- r -->
+    <path d="M142 4 V52"/>
+    <path d="M142 12 C142 8 146 4 150 4 H158 C162 4 166 8 166 12 C166 18 162 22 158 22 H150"/>
+  </g>
+  
+  <!-- "System" - simplified, smaller -->
+  <g transform="translate(80, 38)" stroke="#111111" stroke-width="3" stroke-linecap="round" fill="none">
+    <!-- S -->
+    <path d="M0 10 C0 6 4 2 8 2 H16 C20 2 24 6 24 10 V18 C24 22 20 26 16 26 H8 C4 26 0 22 0 18 Z M0 10 V18"/>
+    <path d="M4 2 H16"/>
+    <path d="M4 26 H16"/>
+    <!-- y -->
+    <path d="M28 2 V26"/>
+    <path d="M28 26 C28 30 32 34 36 34 H40 C44 34 48 30 48 26 V2"/>
+    <!-- s -->
+    <path d="M52 10 C52 6 56 2 60 2 H68 C72 2 76 6 76 10 V18 C76 22 72 26 68 26 H60 C56 26 52 22 52 18 V10 Z M52 10 V18"/>
+    <path d="M56 2 H68"/>
+    <path d="M56 26 H68"/>
+    <!-- t -->
+    <path d="M72 2 V26"/>
+    <path d="M80 2 V26"/>
+    <!-- e -->
+    <path d="M86 10 C86 6 90 2 94 2 H100 C104 2 108 6 108 10 V18 C108 22 104 26 100 26 H94 C90 26 86 22 86 18 V10 Z M86 10 V18"/>
+    <path d="M90 2 H100"/>
+    <path d="M90 26 H100"/>
+  </g>
+</svg>

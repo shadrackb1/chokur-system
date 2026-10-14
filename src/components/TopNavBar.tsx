@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { useGrading } from '../context/GradingContext';
+import { Logo } from '../components/brand/Logo';
 
 export const TopNavBar: React.FC = () => {
   const { activeStream, setActiveStream, activeExam, setActiveExam } = useGrading();

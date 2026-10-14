@@ -14,6 +14,7 @@ export const SettingsView: React.FC = () => {
     downloadMarksTemplateCSV,
     students,
     subjects,
+    activeExamId,
   } = useGrading();
 
   const [formConfig, setFormConfig] = useState(schoolConfig);
@@ -50,9 +51,9 @@ export const SettingsView: React.FC = () => {
     }, 1200);
   };
 
-  const handleProcessRestore = () => {
+  const handleProcessRestore = async () => {
     setRestoreError(false);
-    const success = restoreJSONBackup(restoreText);
+    const success = await restoreJSONBackup(restoreText);
     if (success) {
       setIsRestoreModalOpen(false);
       setRestoreText('');
@@ -110,10 +111,11 @@ export const SettingsView: React.FC = () => {
     }
   };
 
-  const handleConfirmCSVImport = () => {
-    if (!csvInputText.trim()) return;
-    const result = importMarksFromCSV(csvInputText);
-    if (result.success) {
+  const handleConfirmCSVImport = async () => {
+      if (!csvInputText.trim()) return;
+      if (!activeExamId) return;
+      const result = await importMarksFromCSV(activeExamId, csvInputText);
+      if (result.success) {
       const studentCount = result.updates.length;
       const subjectsCount = result.mappedSubjects.length;
       setCsvSuccessMessage(

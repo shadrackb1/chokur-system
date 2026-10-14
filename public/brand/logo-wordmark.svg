@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 56" width="200" height="56" role="img">
+  <title>Chokur Wordmark</title>
+  <g fill="#111111">
+    <!-- C -->
+    <path d="M0 8 C0 2 6 -4 12 -4 L32 -4 C38 -4 44 2 44 8 L44 48 C44 54 38 60 32 60 L12 60 C6 60 0 54 0 48 Z M0 8 L0 48" stroke="#111111" stroke-width="6" stroke-linecap="round" fill="none"/>
+    <path d="M12 -4 L32 -4" stroke="#111111" stroke-width="6" stroke-linecap="round"/>
+    <path d="M12 60 L32 60" stroke="#111111" stroke-width="6" stroke-linecap="round"/>
+    
+    <!-- h -->
+    <path d="M52 -4 L52 56" stroke="#111111" stroke-width="6" stroke-linecap="round"/>
+    <path d="M52 28 C52 22 58 16 64 16 L80 16 C86 16 92 22 92 28 L92 56" stroke="#111111" stroke-width="6" stroke-linecap="round" fill="none"/>
+    
+    <!-- o -->
+    <path d="M100 28 C100 16 110 6 122 6 C134 6 144 16 144 28 C144 40 134 50 122 50 C110 50 100 40 100 28 Z" stroke="#111111" stroke-width="6" stroke-linecap="round" fill="none"/>
+    
+    <!-- k -->
+    <path d="M156 -4 L156 56" stroke="#111111" stroke-width="6" stroke-linecap="round"/>
+    <path d="M156 28 L172 6" stroke="#111111" stroke-width="6" stroke-linecap="round"/>
+    <path d="M156 28 L172 50" stroke="#111111" stroke-width="6" stroke-linecap="round"/>
+    
+    <!-- u -->
+    <path d="M184 8 L184 48 C184 54 190 60 196 60 L208 60 C214 60 220 54 220 48 L220 8" stroke="#111111" stroke-width="6" stroke-linecap="round" fill="none"/>
+    
+    <!-- r -->
+    <path d="M232 -4 L232 56" stroke="#111111" stroke-width="6" stroke-linecap="round"/>
+    <path d="M232 8 C232 0 238 -4 244 -4 L256 -4 C262 -4 268 0 268 8 C268 16 262 22 256 22 L244 22" stroke="#111111" stroke-width="6" stroke-linecap="round" fill="none"/>
+  </g>
+</svg>

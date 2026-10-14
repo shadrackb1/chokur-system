@@ -1,17 +1,27 @@
 // Service Worker for Chokur System - Offline Support
-const CACHE_NAME = 'chokur-system-v2';
+const CACHE_NAME = 'chokur-system-v3';
 const STATIC_ASSETS = [
   '/',
   '/index.html',
-  '/manifest.json',
+  '/manifest.webmanifest',
+  '/brand/logo-symbol.svg',
+  '/brand/logo-horizontal.svg',
+  '/brand/logo-stacked.svg',
+  '/brand/logo-mono-black.svg',
+  '/brand/logo-reversed.svg',
+  '/brand/logo-wordmark.svg',
+  '/brand/favicon.svg',
+  '/brand/apple-touch-icon.png',
+  '/brand/icon-192.png',
+  '/brand/icon-512.png',
+  '/brand/icon-maskable-512.png',
+  '/brand/og-image.png',
+  '/brand/safari-pinned-tab.svg',
 ];
 
 const CACHE_STRATEGIES = {
-  // Cache first for static assets
   static: 'cache-first',
-  // Network first for API/data
   data: 'network-first',
-  // Stale while revalidate for HTML
   html: 'stale-while-revalidate',
 };
 
@@ -41,23 +51,23 @@ self.addEventListener('fetch', (event) => {
   const { request } = event;
   const url = new URL(request.url);
 
-  // Skip non-GET requests
   if (request.method !== 'GET') {
     return;
   }
 
-  // Skip chrome-extension and other non-http(s) schemes
   if (!url.protocol.startsWith('http')) {
     return;
   }
 
-  // Determine strategy based on request
-  const isStaticAsset = url.pathname.startsWith('/assets/') || 
-                        url.pathname.endsWith('.js') || 
+  const isStaticAsset = url.pathname.startsWith('/assets/') ||
+                        url.pathname.startsWith('/brand/') ||
+                        url.pathname.endsWith('.js') ||
                         url.pathname.endsWith('.css') ||
                         url.pathname.endsWith('.woff2') ||
                         url.pathname.endsWith('.png') ||
-                        url.pathname.endsWith('.svg');
+                        url.pathname.endsWith('.svg') ||
+                        url.pathname.endsWith('.ico') ||
+                        url.pathname.endsWith('.webmanifest');
 
   const isHTML = request.headers.get('accept')?.includes('text/html');
 
@@ -73,7 +83,7 @@ self.addEventListener('fetch', (event) => {
 async function cacheFirst(request) {
   const cache = await caches.open(CACHE_NAME);
   const cached = await cache.match(request);
-  
+
   if (cached) {
     return cached;
   }
@@ -85,7 +95,6 @@ async function cacheFirst(request) {
     }
     return response;
   } catch (error) {
-    // Return offline fallback for critical resources
     if (request.destination === 'document') {
       return caches.match('/index.html');
     }
@@ -95,7 +104,7 @@ async function cacheFirst(request) {
 
 async function networkFirst(request) {
   const cache = await caches.open(CACHE_NAME);
-  
+
   try {
     const response = await fetch(request);
     if (response.ok) {
@@ -107,12 +116,11 @@ async function networkFirst(request) {
     if (cached) {
       return cached;
     }
-    
-    // Return offline page for navigation requests
+
     if (request.mode === 'navigate') {
       return caches.match('/index.html');
     }
-    
+
     throw error;
   }
 }
@@ -120,18 +128,17 @@ async function networkFirst(request) {
 async function staleWhileRevalidate(request) {
   const cache = await caches.open(CACHE_NAME);
   const cached = await cache.match(request);
-  
+
   const fetchPromise = fetch(request).then((response) => {
     if (response.ok) {
       cache.put(request, response.clone());
     }
     return response;
   }).catch(() => cached);
-  
+
   return cached || fetchPromise;
 }
 
-// Background sync for pending mutations
 self.addEventListener('sync', (event) => {
   if (event.tag === 'sync-mutations') {
     event.waitUntil(syncPendingMutations());
@@ -139,32 +146,24 @@ self.addEventListener('sync', (event) => {
 });
 
 async function syncPendingMutations() {
-  // This would integrate with the app's sync queue
-  // For now, we just notify clients that sync is happening
   const clients = await self.clients.matchAll();
   clients.forEach((client) => {
     client.postMessage({ type: 'SYNC_STARTED' });
   });
-  
-  // In a real implementation, this would:
-  // 1. Read pending mutations from IndexedDB
-  // 2. Send to server
-  // 3. Mark as synced or failed
-  
+
   clients.forEach((client) => {
     client.postMessage({ type: 'SYNC_COMPLETED' });
   });
 }
 
-// Push notifications (for future use)
 self.addEventListener('push', (event) => {
   if (event.data) {
     const data = event.data.json();
     event.waitUntil(
       self.registration.showNotification(data.title, {
         body: data.body,
-        icon: '/icon-192.png',
-        badge: '/badge-72.png',
+        icon: '/brand/icon-192.png',
+        badge: '/brand/badge-72.png',
       })
     );
   }

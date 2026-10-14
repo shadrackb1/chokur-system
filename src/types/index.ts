@@ -90,7 +90,7 @@ export interface SubjectDepartmentalStat {
 }
 
 export interface GradeDistributionTier {
-  grade: KCSEGrade;
+  grade: string;
   pointsEquivalent: number;
   studentCount: number;
   cohortShare: number; // percentage e.g. 16.7
@@ -115,3 +115,5 @@ export interface Class {
   teacherId: string;
   studentIds: string[];
 }
+
+export type CalculationMethod = 'best7' | 'simpleMean';

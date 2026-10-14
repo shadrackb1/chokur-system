@@ -1,6 +1,7 @@
 import React from 'react';
 import { useGrading } from '../context/GradingContext';
 import { ViewType } from '../types';
+import { Logo } from '../components/brand/Logo';
 
 interface NavItem {
   id: ViewType;
@@ -26,12 +27,10 @@ export const Sidebar: React.FC = () => {
       {/* Top Header & Brand */}
       <div>
         <div className="px-4 pb-4 mb-4 border-b border-hairline flex items-center gap-3">
-          <div className="w-8 h-8 rounded-none bg-primary flex items-center justify-center text-inverse font-mono text-tabular-xs font-bold">
-            CK
-          </div>
-          <div className="leading-tight">
-            <span className="text-h3 text-primary font-semibold tracking-tight">Chokur</span>
-            <span className="text-caption text-tertiary block mt-0.5 uppercase tracking-wider">System</span>
+          <Logo variant="symbol" size={32} />
+          <div className="leading-tight min-w-0">
+            <span className="text-h3 text-primary font-semibold tracking-tight truncate block">Chokur</span>
+            <span className="text-caption text-tertiary block mt-0.5 uppercase tracking-wider truncate block">System</span>
           </div>
         </div>
 

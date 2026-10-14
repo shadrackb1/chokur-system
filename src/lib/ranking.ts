@@ -4,8 +4,8 @@
  * Ties share rank (1, 2, 2, 4)
  */
 
-import { Student, Subject, MarkValue, StudentCalculation, CalculationMethod } from '../../types';
-import { getGradeFromScore, calculateAggregate, PASS_THRESHOLD_POINTS } from './kcse';
+import { Student, Subject, MarkValue, StudentCalculation, CalculationMethod } from '../types';
+import { getGradeFromScore, getGradeFromPoints, calculateAggregate, PASS_THRESHOLD_POINTS } from './kcse';
 
 export interface RankingInput {
   student: Student;

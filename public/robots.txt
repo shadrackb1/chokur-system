@@ -1,0 +1,26 @@
+# Chokur System robots.txt
+User-agent: *
+Allow: /
+
+# Disallow authenticated/app routes
+Disallow: /overview
+Disallow: /marks-entry
+Disallow: /rankings
+Disallow: /subject-analysis
+Disallow: /grade-distribution
+Disallow: /report-cards
+Disallow: /students
+Disallow: /settings
+Disallow: /app/
+Disallow: /brand
+
+# Allow public pages
+Allow: /$
+Allow: /welcome
+Allow: /demo
+Allow: /privacy
+Allow: /terms
+Allow: /404
+
+# Sitemap
+Sitemap: https://chokur.system/sitemap.xml

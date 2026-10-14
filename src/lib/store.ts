@@ -12,6 +12,7 @@ import {
   CalculationMethod,
 } from '../types';
 import { rankAllStudents, RankingInput } from '../lib/ranking';
+import { parseMarksCSV } from '../utils/grading';
 import {
   schoolConfigRepo,
   studentsRepo,
@@ -25,18 +26,6 @@ import {
   getDB,
 } from '../lib/db';
 import { INITIAL_SCHOOL_CONFIG, INITIAL_STUDENTS, INITIAL_SUBJECTS, INITIAL_MARKS } from '../data/initialData';
-
-// Define the Exam type locally since it's not in types yet
-export interface Exam {
-  id: string;
-  name: string;
-  classId: string;
-  term: string;
-  academicYear: string;
-  date: string;
-  subjectIds: string[];
-  isActive: boolean;
-}
 
 // App State
 interface AppState {
@@ -62,7 +51,7 @@ interface AppState {
   subjects: Subject[];
   exams: Exam[];
   classes: Class[];
-  marks: Record<string, Record<string, MarkValue>>; // [examId][studentId][subjectCode]
+  marks: Record<string, Record<string, Record<string, MarkValue>>>; // [examId][studentId][subjectCode]
 
   // Computed (derived from active context)
   filteredStudents: Student[];
@@ -218,7 +207,7 @@ export const useAppStore = create<AppState>()(
       subjects: initialSubjects,
       exams: [],
       classes: [],
-      marks: initialMarks,
+      marks: {} as Record<string, Record<string, Record<string, MarkValue>>>,
 
       // Computed (initialized empty)
       filteredStudents: [],
@@ -432,14 +421,15 @@ export const useAppStore = create<AppState>()(
       addStudent: async (studentData) => {
         const newId = `s-${Date.now()}-${Math.random().toString(36).slice(2, 9)}`;
         const student: Student = { ...studentData, id: newId };
-        await studentsRepo.add({ ...student, createdAt: Date.now(), updatedAt: Date.now() });
+        const now = Date.now();
+        await studentsRepo.add({ ...student, createdAt: now, updatedAt: now });
         set(state => ({ students: [...state.students, student] }));
         get().refreshComputed();
         return newId;
       },
 
       updateStudent: async (student) => {
-        await studentsRepo.update({ ...student, updatedAt: Date.now() });
+        await studentsRepo.update({ ...student, createdAt: Date.now(), updatedAt: Date.now() });
         set(state => ({
           students: state.students.map(s => s.id === student.id ? student : s),
         }));
@@ -512,14 +502,15 @@ export const useAppStore = create<AppState>()(
       addSubject: async (subjectData) => {
         const newId = `sub-${Date.now()}-${Math.random().toString(36).slice(2, 9)}`;
         const subject: Subject = { ...subjectData, id: newId };
-        await subjectsRepo.add({ ...subject, createdAt: Date.now(), updatedAt: Date.now() });
+        const now = Date.now();
+        await subjectsRepo.add({ ...subject, createdAt: now, updatedAt: now });
         set(state => ({ subjects: [...state.subjects, subject] }));
         get().refreshComputed();
         return newId;
       },
 
       updateSubject: async (subject) => {
-        await subjectsRepo.update({ ...subject, updatedAt: Date.now() });
+        await subjectsRepo.update({ ...subject, createdAt: Date.now(), updatedAt: Date.now() });
         set(state => ({
           subjects: state.subjects.map(s => s.id === subject.id ? subject : s),
         }));
@@ -538,13 +529,14 @@ export const useAppStore = create<AppState>()(
       addExam: async (examData) => {
         const newId = `exam-${Date.now()}-${Math.random().toString(36).slice(2, 9)}`;
         const exam: Exam = { ...examData, id: newId };
-        await examsRepo.add({ ...exam, createdAt: Date.now(), updatedAt: Date.now() });
+        const now = Date.now();
+        await examsRepo.add({ ...exam, createdAt: now, updatedAt: now });
         set(state => ({ exams: [...state.exams, exam] }));
         return newId;
       },
 
       updateExam: async (exam) => {
-        await examsRepo.update({ ...exam, updatedAt: Date.now() });
+        await examsRepo.update({ ...exam, createdAt: Date.now(), updatedAt: Date.now() });
         set(state => ({
           exams: state.exams.map(e => e.id === exam.id ? exam : e),
         }));
@@ -567,13 +559,14 @@ export const useAppStore = create<AppState>()(
       addClass: async (classData) => {
         const newId = `class-${Date.now()}-${Math.random().toString(36).slice(2, 9)}`;
         const classRecord: Class = { ...classData, id: newId };
-        await classesRepo.add({ ...classRecord, createdAt: Date.now(), updatedAt: Date.now() });
+        const now = Date.now();
+        await classesRepo.add({ ...classRecord, createdAt: now, updatedAt: now });
         set(state => ({ classes: [...state.classes, classRecord] }));
         return newId;
       },
 
       updateClass: async (classData) => {
-        await classesRepo.update({ ...classData, updatedAt: Date.now() });
+        await classesRepo.update({ ...classData, createdAt: Date.now(), updatedAt: Date.now() });
         set(state => ({
           classes: state.classes.map(c => c.id === classData.id ? classData : c),
         }));
@@ -596,23 +589,23 @@ export const useAppStore = create<AppState>()(
       },
 
       // Marks mutations
-      updateMark: async (examId, studentId, subjectCode, value) => {
-        const currentMarks = get().marks[examId]?.[studentId] || {};
-        const newMarks = { ...currentMarks, [subjectCode]: value };
+        updateMark: async (examId, studentId, subjectCode, value) => {
+          const currentMarks = get().marks[examId]?.[studentId] || {};
+          const newMarks = { ...currentMarks, [subjectCode]: value };
 
-        await marksRepo.set(examId, studentId, newMarks);
+          await marksRepo.set(examId, studentId, newMarks);
 
-        set(state => ({
-          marks: {
-            ...state.marks,
-            [examId]: {
-              ...state.marks[examId],
+          set(state => {
+            const newMarksState = { ...state.marks };
+            if (!newMarksState[examId]) newMarksState[examId] = {};
+            newMarksState[examId] = {
+              ...newMarksState[examId],
               [studentId]: newMarks,
-            },
-          },
-        }));
-        get().refreshComputed();
-      },
+            };
+            return { marks: newMarksState };
+          });
+          get().refreshComputed();
+        },
 
       batchUpdateMarks: async (examId, updates) => {
         const entries = updates.map(u => ({
@@ -638,8 +631,33 @@ export const useAppStore = create<AppState>()(
       },
 
       importMarksFromCSV: async (examId, csvContent) => {
-        // Simplified - would use the full parser from grading.ts
-        return { success: 0, errors: ['Not fully implemented'] };
+        const store = get();
+        const result = parseMarksCSV(csvContent, store.students, store.subjects);
+        
+        if (!result.success || result.updates.length === 0) {
+          return { success: 0, errors: result.errors };
+        }
+
+        // Convert parsed results to marks updates
+        const updates = result.updates.map(u => ({
+          examId,
+          studentId: u.studentId,
+          marks: u.marks,
+        }));
+
+        await marksRepo.setBatch(updates);
+
+        set(state => {
+          const newMarks = { ...state.marks };
+          for (const entry of updates) {
+            if (!newMarks[entry.examId]) newMarks[entry.examId] = {};
+            newMarks[entry.examId][entry.studentId] = entry.marks;
+          }
+          return { marks: newMarks };
+        });
+        get().refreshComputed();
+        
+        return { success: result.updates.length, errors: result.errors };
       },
 
       // Backup/Restore
@@ -842,7 +860,7 @@ async function loadFromDB(): Promise<void> {
   store.classes = classes.map(convertClassRecord);
 
   // Convert marks to nested structure
-  const marks: Record<string, Record<string, MarkValue>> = {};
+  const marks: Record<string, Record<string, Record<string, MarkValue>>> = {};
   for (const m of marksData) {
     if (!marks[m.examId]) marks[m.examId] = {};
     marks[m.examId][m.studentId] = m.marks;

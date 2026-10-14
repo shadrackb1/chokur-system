@@ -3,6 +3,10 @@ import { GradeChip } from '../components/GradeChip';
 import { useGrading } from '../context/GradingContext';
 import { MarkValue } from '../types';
 import { getGradeFromScore } from '../utils/grading';
+import { useToast } from '../components/Toast';
+import { toastHelpers } from '../components/Toast';
+import { TableSkeleton } from '../components/Skeletons';
+import { EmptyStates } from '../components/EmptyState';
 
 export const MarksEntryView: React.FC = () => {
   const {
@@ -14,22 +18,24 @@ export const MarksEntryView: React.FC = () => {
     rankings,
     activeStream,
     activeExam,
+    activeExamId,
+    setActiveView,
   } = useGrading();
 
-  const [focusedCell, setFocusedCell] = useState<{ studentId: string; subjectCode: string } | null>({
-    studentId: 's-3',
-    subjectCode: 'CHE',
-  });
+  const { addToast } = useToast();
+
+  const [focusedCell, setFocusedCell] = useState<{ studentId: string; subjectCode: string } | null>(null);
   const [editingValue, setEditingValue] = useState<string>('');
   const [isPastingModalOpen, setIsPastingModalOpen] = useState(false);
   const [pastedText, setPastedText] = useState('');
   const [saveToast, setSaveToast] = useState(false);
+  const [isDirty, setIsDirty] = useState(false);
 
   const inputRef = useRef<HTMLInputElement>(null);
 
   // Sync editing value when focused cell changes
   useEffect(() => {
-    if (focusedCell) {
+    if (focusedCell && activeExamId) {
       const current = marks[focusedCell.studentId]?.[focusedCell.subjectCode];
       setEditingValue(current === null || current === undefined ? '' : String(current));
       setTimeout(() => {
@@ -37,7 +43,7 @@ export const MarksEntryView: React.FC = () => {
         inputRef.current?.select();
       }, 10);
     }
-  }, [focusedCell, marks]);
+  }, [focusedCell, activeExamId, marks]);
 
   // Handle cell navigation
   const navigateCell = (deltaRow: number, deltaCol: number) => {
@@ -68,7 +74,7 @@ export const MarksEntryView: React.FC = () => {
   };
 
   const handleCommitValue = (valStr: string) => {
-    if (!focusedCell) return;
+    if (!focusedCell || !activeExamId) return;
     const trimmed = valStr.trim().toUpperCase();
     if (trimmed === 'ABS' || trimmed === 'A') {
       updateMark(focusedCell.studentId, focusedCell.subjectCode, 'ABS');
@@ -81,6 +87,7 @@ export const MarksEntryView: React.FC = () => {
         updateMark(focusedCell.studentId, focusedCell.subjectCode, clamped);
       }
     }
+    setIsDirty(true);
   };
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -119,18 +126,33 @@ export const MarksEntryView: React.FC = () => {
 
   const handleSaveAll = () => {
     setSaveToast(true);
+    setIsDirty(false);
+    addToast(toastHelpers.saved(rankings.length, 'marks'));
     setTimeout(() => setSaveToast(false), 2500);
   };
 
+  // Warn before leaving with unsaved changes
+  useEffect(() => {
+    const handleBeforeUnload = (e: BeforeUnloadEvent) => {
+      if (isDirty) {
+        e.preventDefault();
+        e.returnValue = '';
+      }
+    };
+    window.addEventListener('beforeunload', handleBeforeUnload);
+    return () => window.removeEventListener('beforeunload', handleBeforeUnload);
+  }, [isDirty]);
+
   // Process Excel paste
   const handleProcessExcelPaste = () => {
-    if (!pastedText.trim()) {
+    if (!activeExamId || !pastedText.trim()) {
       setIsPastingModalOpen(false);
       return;
     }
 
     const lines = pastedText.split(/\r?\n/).filter((l) => l.trim().length > 0);
     const updates: Array<{ studentId: string; subjectCode: string; value: MarkValue }> = [];
+    let invalidCells = 0;
 
     lines.forEach((line, rowIdx) => {
       if (rowIdx >= students.length) return;
@@ -152,6 +174,8 @@ export const MarksEntryView: React.FC = () => {
               subjectCode: targetSubject.code,
               value: Math.max(0, Math.min(100, num)),
             });
+          } else if (trimmed !== '') {
+            invalidCells++;
           }
         }
       });
@@ -159,10 +183,14 @@ export const MarksEntryView: React.FC = () => {
 
     if (updates.length > 0) {
       batchUpdateMarks(updates);
+      addToast(toastHelpers.saved(updates.length, 'marks'));
+    }
+    if (invalidCells > 0) {
+      addToast(toastHelpers.warning('Some cells skipped', `${invalidCells} invalid cells were ignored`));
     }
     setIsPastingModalOpen(false);
     setPastedText('');
-    handleSaveAll();
+    setIsDirty(true);
   };
 
   // Fast map from student ID to StudentCalculation for summary columns
@@ -174,6 +202,7 @@ export const MarksEntryView: React.FC = () => {
 
   // Calculate subject averages for footer row
   const subjectAverages = useMemo(() => {
+    if (!activeExamId) return subjects.map(() => '—');
     return subjects.map((subj) => {
       let sum = 0;
       let count = 0;
@@ -186,7 +215,7 @@ export const MarksEntryView: React.FC = () => {
       });
       return count > 0 ? (sum / count).toFixed(1) : '—';
     });
-  }, [subjects, students, marks]);
+  }, [subjects, students, marks, activeExamId]);
 
   // Overall class averages for footer
   const classAvg = useMemo(() => {
@@ -201,6 +230,15 @@ export const MarksEntryView: React.FC = () => {
     return (sum / rankings.length).toFixed(1);
   }, [rankings]);
 
+  // Loading state
+  if (!activeExamId) {
+    return (
+      <div className="p-6 max-w-[var(--content-max-width-wide)] w-full mx-auto flex-1 flex flex-col">
+        {EmptyStates.noMarks(() => {})}
+      </div>
+    );
+  }
+
   return (
     <div className="p-6 max-w-[var(--content-max-width-wide)] w-full mx-auto flex-1 flex flex-col">
       {/* Header Section */}
@@ -213,7 +251,7 @@ export const MarksEntryView: React.FC = () => {
         </div>
         {saveToast && (
           <div className="bg-primary text-inverse px-3 py-1 rounded-sm text-xs font-medium flex items-center gap-1.5 animate-fadeIn">
-            <span className="material-symbols-outlined text-[16px] text-success">check_circle</span>
+            <span className="material-symbols-outlined text-[16px] text-emerald-400">check_circle</span>
             <span>All records synchronized and saved locally</span>
           </div>
         )}
@@ -346,15 +384,15 @@ export const MarksEntryView: React.FC = () => {
                       </div>
                     </td>
 
-                    {/* Subject Score Cells */}
-                    {subjects.map((subj) => {
-                      const isFocused =
-                        focusedCell?.studentId === student.id &&
-                        focusedCell?.subjectCode === subj.code;
-                      const rawVal = marks[student.id]?.[subj.code];
-                      const isAbsent = rawVal === 'ABS';
-                      const numVal = typeof rawVal === 'number' ? rawVal : null;
-                      const gradeRes = isAbsent ? null : getGradeFromScore(rawVal);
+                    // Subject Score Cells
+                                        {subjects.map((subj) => {
+                                          const isFocused =
+                                            focusedCell?.studentId === student.id &&
+                                            focusedCell?.subjectCode === subj.code;
+                                          const rawVal = marks[student.id]?.[subj.code];
+                                          const isAbsent = rawVal === 'ABS';
+                                          const numVal = typeof rawVal === 'number' ? rawVal : null;
+                                          const gradeRes = isAbsent ? null : getGradeFromScore(rawVal);
 
                       if (isFocused) {
                         return (
@@ -471,7 +509,7 @@ export const MarksEntryView: React.FC = () => {
       {/* BELOW THE GRID: KEYBOARD SHORTCUTS HINTS */}
       <footer className="mt-3 pt-2 border-t border-hairline flex flex-wrap items-center justify-between text-caption text-secondary gap-2">
         <div className="flex items-center gap-2">
-          <span className="w-2 h-2 rounded-full bg-success"></span>
+          <span className="w-2 h-2 rounded-full bg-emerald-700"></span>
           <span className="text-secondary-dark">
             Ledger synchronized · {students.length}/{students.length} student records active
           </span>

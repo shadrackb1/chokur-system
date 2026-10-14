@@ -2,6 +2,8 @@ import React, { useMemo, useState } from 'react';
 import { GradeChip } from '../components/GradeChip';
 import { useGrading } from '../context/GradingContext';
 import { getGradeFromScore } from '../utils/grading';
+import { MarkValue } from '../types';
+import { Logo } from '../components/brand/Logo';
 
 const DEFAULT_SUBJECT_REMARKS: Record<string, string> = {
   MAT: 'Excellent logical and numerical performance',
@@ -72,24 +74,26 @@ export const ReportCardsView: React.FC = () => {
 
   // Render a single A4 report card
   const renderReportCard = (calc: typeof selectedCalculation) => {
-    const studentMarks = marks[calc.student.id] || {};
+    const studentMarks: Record<string, MarkValue> = marks[calc.student.id] || {};
 
     return (
       <article
         key={calc.student.id}
         className="w-full max-w-[820px] bg-[#FFFFFF] border border-[#DDD6C7] p-8 md:p-10 shadow-sm text-[#111111] print-sheet mb-8"
       >
-        {/* School Official Archival Header */}
+        {/* School Official Archival Header with Logo */}
         <div className="text-center pb-5 border-b-2 border-[#111111]">
-          <div className="w-10 h-10 border border-[#111111] rounded-full flex items-center justify-center mx-auto mb-2 text-[#111111]">
-            <span className="material-symbols-outlined text-[20px]">school</span>
+          <div className="flex items-center justify-center gap-3 mb-2">
+            <Logo variant="symbol" tone="mono" size={36} />
+            <div className="text-left">
+              <h1 className="text-[20px] font-bold tracking-tight uppercase font-headline-lg text-[#111111]">
+                {schoolConfig.schoolName}
+              </h1>
+              <p className="font-caption text-caption text-[#5F5E5E] tracking-wider mt-0.5">
+                {schoolConfig.postalAddress} · TEL: {schoolConfig.contactPhoneEmail}
+              </p>
+            </div>
           </div>
-          <h1 className="text-[20px] font-bold tracking-tight uppercase font-headline-lg text-[#111111]">
-            {schoolConfig.schoolName}
-          </h1>
-          <p className="font-caption text-caption text-[#5F5E5E] tracking-wider mt-0.5 uppercase">
-            {schoolConfig.postalAddress} · TEL: {schoolConfig.contactPhoneEmail}
-          </p>
           <div className="mt-3 inline-block border-y border-[#DDD6C7] py-1 px-4">
             <h2 className="font-headline-sm text-headline-sm uppercase tracking-wider font-semibold text-[#111111]">
               Student Academic Report Card
@@ -113,7 +117,7 @@ export const ReportCardsView: React.FC = () => {
             </span>
           </div>
           <div className="flex justify-between border-b border-[#DDD6C7]/50 pb-1">
-            <span className="text-[#5F5E5E] font-caption text-caption uppercase">CLASS &amp; STREAM:</span>
+            <span className="text-[#5F5E5E] font-caption text-caption uppercase">CLASS & STREAM:</span>
             <span className="font-semibold text-[#111111]">{calc.student.stream}</span>
           </div>
           <div className="flex justify-between border-b border-[#DDD6C7]/50 pb-1">
@@ -255,7 +259,7 @@ export const ReportCardsView: React.FC = () => {
             <span className="text-[#5F5E5E] block mb-6">Class Teacher:</span>
             <div className="border-b border-[#111111]"></div>
             <span className="font-tabular-sm text-tabular-sm text-[#9A958A] mt-1 block">
-              Signature &amp; Date
+              Signature & Date
             </span>
           </div>
           <div>
@@ -282,6 +286,12 @@ export const ReportCardsView: React.FC = () => {
             Opening date:{' '}
             <strong className="text-[#111111] font-medium">{schoolConfig.termOpeningDate}</strong>
           </span>
+        </div>
+
+        {/* Print footer - Generated with Chokur System */}
+        <div className="print-only mt-4 pt-3 border-t border-[#DDD6C7] flex items-center justify-between font-caption text-caption text-[#9A958A]">
+          <Logo variant="symbol" tone="mono" size={16} />
+          <span>Generated with Chokur System</span>
         </div>
       </article>
     );

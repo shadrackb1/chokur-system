@@ -1,0 +1,39 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 128" width="384" height="128" role="img">
+  <title>Chokur Logo Direction Concepts</title>
+  <rect width="384" height="128" fill="#F6F1E7"/>
+  
+  <!-- Direction 1: Ledger Lines -->
+  <g transform="translate(32, 32)">
+    <text x="0" y="-8" font-family="Inter, sans-serif" font-size="11" font-weight="600" fill="#111111" text-transform="uppercase" letter-spacing="0.08em">Direction 1: Ledger Lines</text>
+    <svg viewBox="0 0 64 64" width="64" height="64">
+      <!-- Three horizontal rules like mark book lines -->
+      <rect x="8" y="16" width="48" height="3" fill="#111111" rx="1.5"/>
+      <rect x="8" y="28" width="36" height="3" fill="#111111" rx="1.5"/>
+      <rect x="8" y="40" width="24" height="3" fill="#C2410C" rx="1.5"/>
+    </svg>
+  </g>
+  
+  <!-- Direction 2: Rising Mark -->
+  <g transform="translate(160, 32)">
+    <text x="0" y="-8" font-family="Inter, sans-serif" font-size="11" font-weight="600" fill="#111111" text-transform="uppercase" letter-spacing="0.08em">Direction 2: Rising Mark</text>
+    <svg viewBox="0 0 64 64" width="64" height="64">
+      <!-- Outlined square -->
+      <rect x="8" y="8" width="48" height="48" fill="none" stroke="#111111" stroke-width="3" rx="4"/>
+      <!-- Ascending tick with upward bar -->
+      <path d="M18 42 L28 28 L38 38" fill="none" stroke="#111111" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+      <!-- Accent endpoint -->
+      <circle cx="38" cy="38" r="3.5" fill="#C2410C"/>
+    </svg>
+  </g>
+  
+  <!-- Direction 3: Threshold Line -->
+  <g transform="translate(288, 32)">
+    <text x="0" y="-8" font-family="Inter, sans-serif" font-size="11" font-weight="600" fill="#111111" text-transform="uppercase" letter-spacing="0.08em">Direction 3: Threshold Line</text>
+    <svg viewBox="0 0 64 64" width="64" height="64">
+      <!-- Solid black square -->
+      <rect x="8" y="8" width="48" height="48" fill="#111111" rx="4"/>
+      <!-- Thin accent line at 2/3 height (C+ pass line) -->
+      <line x1="8" y1="40" x2="56" y2="40" stroke="#C2410C" stroke-width="2"/>
+    </svg>
+  </g>
+</svg>

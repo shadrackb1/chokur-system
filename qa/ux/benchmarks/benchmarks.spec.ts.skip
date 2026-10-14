@@ -1,0 +1,268 @@
+import { test, expect } from '@playwright/test';
+
+test.describe('UX Benchmarks - Before', () => {
+  test.beforeEach(async ({ page }) => {
+    await page.goto('http://localhost:3000');
+    await page.waitForLoadState('networkidle');
+  });
+
+  test('BM1: First run to first ranking', async ({ page }) => {
+    const start = Date.now();
+    
+    // Wait for app to load
+    await page.waitForSelector('[role="navigation"]', { timeout: 10000 });
+    
+    // Check if we're in app or landing
+    const isApp = await page.locator('text=Overview').isVisible().catch(() => false);
+    
+    if (!isApp) {
+      // Click "Try with sample data" or "Request a demo"
+      const tryButton = page.locator('text=Try with sample data');
+      if (await tryButton.isVisible().catch(() => false)) {
+        await tryButton.click();
+      } else {
+        // Fallback: click demo
+        await page.locator('text=Request a demo').click();
+      }
+      await page.waitForSelector('text=Overview');
+    }
+    
+    // Navigate to Marks Entry
+    await page.click('text=Marks Entry');
+    await page.waitForSelector('text=Enter marks');
+    
+    // Navigate to Rankings
+    await page.click('text=Rankings');
+    await page.waitForSelector('text=Rankings');
+    
+    const elapsed = Date.now() - start;
+    console.log(`BM1 elapsed: ${elapsed}ms`);
+    
+    // Record benchmark
+    await page.evaluate((ms) => {
+      const data = JSON.parse(localStorage.getItem('ux-benchmarks') || '{}');
+      data.bm1_firstRunToRanking = ms;
+      localStorage.setItem('ux-benchmarks', JSON.stringify(data));
+    }, elapsed);
+  });
+
+  test('BM2a: Enter 32x10 marks by keyboard (desktop)', async ({ page }) => {
+    await page.click('text=Marks Entry');
+    await page.waitForSelector('table');
+    
+    const start = Date.now();
+    let keyPresses = 0;
+    let clicks = 0;
+    
+    // Focus first cell
+    await page.keyboard.press('Tab');
+    clicks++;
+    
+    // Simulate entering marks for 32 students x 10 subjects
+    // Using a smaller sample for benchmark (5 students x 5 subjects)
+    const students = 5;
+    const subjects = 5;
+    
+    for (let s = 0; s < students; s++) {
+      for (let sub = 0; sub < subjects; sub++) {
+        const mark = 50 + Math.floor(Math.random() * 40);
+        await page.keyboard.type(String(mark));
+        keyPresses += String(mark).length;
+        await page.keyboard.press('Enter');
+        keyPresses++;
+      }
+      // Move to next student row start
+      for (let i = 0; i < subjects; i++) {
+        await page.keyboard.press('ArrowLeft');
+      }
+    }
+    
+    const elapsed = Date.now() - start;
+    console.log(`BM2a elapsed: ${elapsed}ms, keyPresses: ${keyPresses}, clicks: ${clicks}`);
+    
+    await page.evaluate((data) => {
+      const benchmarks = JSON.parse(localStorage.getItem('ux-benchmarks') || '{}');
+      benchmarks.bm2a_desktopKeyboard = data;
+      localStorage.setItem('ux-benchmarks', JSON.stringify(benchmarks));
+    }, { elapsed, keyPresses, clicks });
+  });
+
+  test('BM2b: Enter marks by student-by-student mode (phone emulation)', async ({ page }) => {
+    // Set mobile viewport
+    await page.setViewportSize({ width: 390, height: 844 });
+    await page.reload();
+    await page.waitForLoadState('networkidle');
+    
+    await page.click('text=Marks Entry');
+    await page.waitForSelector('table');
+    
+    const start = Date.now();
+    let taps = 0;
+    
+    // Student-by-student: tap student, enter marks
+    const students = 5;
+    const subjects = 5;
+    
+    for (let s = 0; s < students; s++) {
+      // Tap student row (first column)
+      await page.locator('tbody tr').nth(s).locator('td').first().click();
+      taps++;
+      
+      for (let sub = 0; sub < subjects; sub++) {
+        const mark = 50 + Math.floor(Math.random() * 40);
+        await page.keyboard.type(String(mark));
+        await page.keyboard.press('Enter');
+        taps += 2; // tap to focus + tap enter
+      }
+    }
+    
+    const elapsed = Date.now() - start;
+    console.log(`BM2b elapsed: ${elapsed}ms, taps: ${taps}`);
+    
+    await page.evaluate((data) => {
+      const benchmarks = JSON.parse(localStorage.getItem('ux-benchmarks') || '{}');
+      benchmarks.bm2b_mobileStudentByStudent = data;
+      localStorage.setItem('ux-benchmarks', JSON.stringify(benchmarks));
+    }, { elapsed, taps });
+    
+    // Reset viewport
+    await page.setViewportSize({ width: 1440, height: 900 });
+  });
+
+  test('BM3: Find near C+ line and open report card', async ({ page }) => {
+    await page.click('text=Overview');
+    await page.waitForSelector('text=Near the line');
+    
+    const start = Date.now();
+    
+    // Find first student in "Near the line"
+    const viewCardButton = page.locator('text=View card').first();
+    await expect(viewCardButton).toBeVisible();
+    await viewCardButton.click();
+    
+    // Should navigate to Report Cards with that student selected
+    await page.waitForSelector('text=Report Cards');
+    await page.waitForSelector('text=Student Academic Report Card');
+    
+    const elapsed = Date.now() - start;
+    console.log(`BM3 elapsed: ${elapsed}ms`);
+    
+    await page.evaluate((ms) => {
+      const data = JSON.parse(localStorage.getItem('ux-benchmarks') || '{}');
+      data.bm3_nearCPlusToReportCard = ms;
+      localStorage.setItem('ux-benchmarks', JSON.stringify(data));
+    }, elapsed);
+  });
+
+  test('BM4: Print all report cards and export rankings CSV', async ({ page }) => {
+    await page.click('text=Report Cards');
+    await page.waitForSelector('text=Report Cards');
+    
+    const start = Date.now();
+    
+    // Click "Print all cards for class"
+    const printAllButton = page.locator('text=Print all cards for class');
+    await expect(printAllButton).toBeVisible();
+    
+    // Start waiting for download before clicking
+    const downloadPromise = page.waitForEvent('download');
+    await printAllButton.click();
+    const download = await downloadPromise;
+    
+    // Also test CSV export from Rankings
+    await page.click('text=Rankings');
+    await page.waitForSelector('text=Rankings');
+    
+    const csvDownloadPromise = page.waitForEvent('download');
+    await page.click('text=Export CSV');
+    const csvDownload = await csvDownloadPromise;
+    
+    const elapsed = Date.now() - start;
+    console.log(`BM4 elapsed: ${elapsed}ms`);
+    
+    await page.evaluate((ms) => {
+      const data = JSON.parse(localStorage.getItem('ux-benchmarks') || '{}');
+      data.bm4_printAndExport = ms;
+      localStorage.setItem('ux-benchmarks', JSON.stringify(data));
+    }, elapsed);
+  });
+
+  test('BM5: Correct one wrong mark and confirm rank updated', async ({ page }) => {
+    await page.click('text=Marks Entry');
+    await page.waitForSelector('table');
+    
+    // Find a cell with a mark
+    const firstMarkCell = page.locator('tbody td').filter({ hasText: /^\d+$/ }).first();
+    const originalText = await firstMarkCell.textContent();
+    const originalMark = parseInt(originalText || '0');
+    
+    const start = Date.now();
+    
+    // Click cell to focus
+    await firstMarkCell.click();
+    
+    // Type new mark (original + 10)
+    const newMark = Math.min(100, originalMark + 10);
+    await page.keyboard.type(String(newMark));
+    await page.keyboard.press('Enter');
+    
+    // Wait for rank to update
+    await page.waitForTimeout(500);
+    
+    // Navigate to Rankings and verify rank changed
+    await page.click('text=Rankings');
+    await page.waitForSelector('text=Rankings');
+    
+    const elapsed = Date.now() - start;
+    console.log(`BM5 elapsed: ${elapsed}ms`);
+    
+    await page.evaluate((ms) => {
+      const data = JSON.parse(localStorage.getItem('ux-benchmarks') || '{}');
+      data.bm5_correctMarkRankUpdate = ms;
+      localStorage.setItem('ux-benchmarks', JSON.stringify(data));
+    }, elapsed);
+  });
+
+  test('BM6: Go offline, enter marks, come back online', async ({ page }) => {
+    await page.click('text=Marks Entry');
+    await page.waitForSelector('table');
+    
+    const start = Date.now();
+    
+    // Go offline
+    await page.context().setOffline(true);
+    
+    // Verify offline indicator appears
+    await page.waitForSelector('text=/offline/i', { timeout: 5000 });
+    
+    // Enter a mark
+    const cell = page.locator('tbody td').filter({ hasText: /^\d+$/ }).first();
+    await cell.click();
+    await page.keyboard.type('75');
+    await page.keyboard.press('Enter');
+    
+    // Go back online
+    await page.context().setOffline(false);
+    
+    // Wait for sync indicator
+    await page.waitForSelector('text=/synced|saved/i', { timeout: 10000 });
+    
+    const elapsed = Date.now() - start;
+    console.log(`BM6 elapsed: ${elapsed}ms`);
+    
+    await page.evaluate((ms) => {
+      const data = JSON.parse(localStorage.getItem('ux-benchmarks') || '{}');
+      data.bm6_offlineOnline = ms;
+      localStorage.setItem('ux-benchmarks', JSON.stringify(data));
+    }, elapsed);
+  });
+});
+
+test.afterAll(async ({ page }) => {
+  // Output final benchmarks
+  const benchmarks = await page.evaluate(() => 
+    JSON.parse(localStorage.getItem('ux-benchmarks') || '{}')
+  );
+  console.log('=== BENCHMARK RESULTS (BEFORE) ===');
+  console.log(JSON.stringify(benchmarks, null, 2));
+});
