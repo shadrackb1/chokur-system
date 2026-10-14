@@ -132,8 +132,8 @@ const RootRouter: React.FC = () => {
 
   useEffect(() => {
     // Check if we're on a public route (landing, demo, privacy, terms, brand, 404)
-    const isPublicRoute = location.pathname === '/' ||
-                          location.pathname.startsWith('/welcome') ||
+    // Root "/" goes to app shell, not landing
+    const isPublicRoute = location.pathname.startsWith('/welcome') ||
                           location.pathname.startsWith('/demo') ||
                           location.pathname.startsWith('/privacy') ||
                           location.pathname.startsWith('/terms') ||
