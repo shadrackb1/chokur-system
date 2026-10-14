@@ -2,9 +2,10 @@ import React, { useMemo, useState } from 'react';
 import { GradeChip } from '../components/GradeChip';
 import { useGrading } from '../context/GradingContext';
 import { exportTableToCSV } from '../utils/grading';
+import { Logo } from '../components/brand/Logo';
 
 export const RankingsView: React.FC = () => {
-  const { rankings, classAverage, meanGrade, activeStream, activeExam } = useGrading();
+  const { rankings, classAverage, meanGrade, activeStream, activeExam, schoolConfig } = useGrading();
   const [searchQuery, setSearchQuery] = useState('');
 
   // Filter rankings by search term
@@ -61,6 +62,35 @@ export const RankingsView: React.FC = () => {
 
   return (
     <div className="max-w-[var(--content-max-width)] mx-auto px-6 py-8">
+      {/* Print-only header */}
+      <div className="print-only mb-6 text-center">
+        <div className="flex items-center justify-center gap-3 mb-2">
+          <Logo variant="symbol" tone="mono" size={36} />
+          <div className="text-left">
+            <h1 className="text-[20px] font-bold tracking-tight uppercase text-[#111111]">
+              {schoolConfig?.schoolName || 'Chokur System'}
+            </h1>
+            <p className="font-caption text-caption text-[#5F5E5E] tracking-wider mt-0.5">
+              {schoolConfig?.postalAddress || ''} · TEL: {schoolConfig?.contactPhoneEmail || ''}
+            </p>
+          </div>
+        </div>
+        <div className="mt-3 inline-block border-y border-[#DDD6C7] py-1 px-4">
+          <h2 className="font-headline-sm text-headline-sm uppercase tracking-wider font-semibold text-[#111111]">
+            Class Ranking Sheet
+          </h2>
+        </div>
+        <p className="font-caption text-caption text-[#5F5E5E] uppercase tracking-widest mt-1">
+          {activeStream} · {activeExam}
+        </p>
+      </div>
+
+      {/* Print-only footer */}
+      <div className="print-only mt-6 pt-4 border-t border-[#DDD6C7] text-center">
+        <p className="font-caption text-caption text-[#5F5E5E] tracking-wider">
+          Generated with Chokur System
+        </p>
+      </div>
       {/* Header Area */}
       <section className="mb-6 flex flex-col gap-1">
         <h1 className="text-h1 text-primary tracking-tight">Rankings</h1>

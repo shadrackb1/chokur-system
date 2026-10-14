@@ -259,7 +259,7 @@ function Hero() {
                 aria-label="Enter a test mark to see live grade"
               />
               {liveGrade && (
-                <div className="flex items-center gap-3">
+                <div className="flex items-center gap-3" aria-live="polite" aria-atomic="true">
                   <GradeChip grade={liveGrade.grade} size="md" />
                   <span className="text-body-sm text-secondary font-mono tabular-nums">{liveGrade.points} pts</span>
                 </div>
@@ -433,7 +433,9 @@ function MiniDemoMarksGrid() {
               className="w-20 px-2 py-1.5 bg-surface-panel border border-hairline rounded-sm text-body text-right font-mono tabular-nums focus:outline-none focus:border-brand"
               aria-label={`${subjectNames[code]} mark`}
             />
-            <GradeChip grade={getGradeFromScore(marks[code]).grade} size="sm" />
+            <div aria-live="polite" aria-atomic="true">
+              <GradeChip grade={getGradeFromScore(marks[code]).grade} size="sm" />
+            </div>
           </div>
         ))}
       </div>
@@ -522,7 +524,7 @@ function MiniDemoReportCard() {
                 <tr key={subj.code} className="hover:bg-surface-container-low">
                   <td className="py-1">{subj.name}</td>
                   <td className="py-1 text-right">{typeof mark === 'number' ? mark : '—'}</td>
-                  <td className="py-1 text-center"><GradeChip grade={grade} size="sm" /></td>
+                  <td className="py-1 text-center"><div aria-live="polite" aria-atomic="true"><GradeChip grade={grade} size="sm" /></div></td>
                 </tr>
               );
             })}
@@ -574,7 +576,9 @@ function KCSENative() {
                     <tr key={band.grade} className={`h-10 ${band.grade === 'C+' ? 'bg-brand-light' : ''}`}>
                       <td className="px-4 text-tabular-md font-medium text-primary">{band.min}–{band.max}</td>
                       <td className="px-4 text-center">
-                        <GradeChip grade={band.grade} />
+                        <div aria-live="polite" aria-atomic="true">
+                          <GradeChip grade={band.grade} />
+                        </div>
                       </td>
                       <td className="px-4 text-tabular-md text-center font-medium text-primary">{band.points}</td>
                       <td className="px-4 text-body-sm">

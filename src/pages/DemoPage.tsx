@@ -202,7 +202,7 @@ export default function DemoPage() {
             ) : (
               <form onSubmit={handleSubmit} className="bg-surface-panel border border-hairline rounded-sm p-6 lg:p-8" noValidate>
                 {submitStatus === 'error' && (
-                  <div className="mb-6 p-4 bg-error-bg border border-error rounded-sm flex items-start gap-3" role="alert">
+                  <div className="mb-6 p-4 bg-error-bg border border-error rounded-sm flex items-start gap-3" role="alert" aria-live="assertive">
                     <span className="material-symbols-outlined text-error text-[20px] mt-0.5">error</span>
                     <div>
                       <p className="text-body text-error font-medium">Submission failed</p>

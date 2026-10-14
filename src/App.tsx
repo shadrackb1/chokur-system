@@ -47,10 +47,12 @@ const Skeleton = () => (
 );
 
 const AppShell: React.FC = () => {
-  const {
+  const { activeView } = useGrading();
+  const location = useLocation();
+
   // Inject noindex meta tag for app routes
   useEffect(() => {
-    let meta = document.querySelector('meta[name="robots"]');
+    let meta = document.querySelector('meta[name="robots"]') as HTMLMetaElement | null;
     if (!meta) {
       meta = document.createElement('meta');
       meta.name = 'robots';
@@ -60,8 +62,7 @@ const AppShell: React.FC = () => {
     return () => {
       meta.content = 'index, follow';
     };
-  }, []); activeView } = useGrading();
-  const location = useLocation();
+  }, []);
 
   return (
     <div className="min-h-screen bg-surface text-primary flex flex-col font-body">

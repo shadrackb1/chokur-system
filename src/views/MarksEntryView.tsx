@@ -77,14 +77,14 @@ export const MarksEntryView: React.FC = () => {
     if (!focusedCell || !activeExamId) return;
     const trimmed = valStr.trim().toUpperCase();
     if (trimmed === 'ABS' || trimmed === 'A') {
-      updateMark(focusedCell.studentId, focusedCell.subjectCode, 'ABS');
+      updateMark(activeExamId, focusedCell.studentId, focusedCell.subjectCode, 'ABS');
     } else if (trimmed === '') {
-      updateMark(focusedCell.studentId, focusedCell.subjectCode, null);
+      updateMark(activeExamId, focusedCell.studentId, focusedCell.subjectCode, null);
     } else {
       const num = parseInt(trimmed, 10);
       if (!isNaN(num)) {
         const clamped = Math.max(0, Math.min(100, num));
-        updateMark(focusedCell.studentId, focusedCell.subjectCode, clamped);
+        updateMark(activeExamId, focusedCell.studentId, focusedCell.subjectCode, clamped);
       }
     }
     setIsDirty(true);
@@ -182,7 +182,7 @@ export const MarksEntryView: React.FC = () => {
     });
 
     if (updates.length > 0) {
-      batchUpdateMarks(updates);
+      batchUpdateMarks(activeExamId, updates);
       addToast(toastHelpers.saved(updates.length, 'marks'));
     }
     if (invalidCells > 0) {

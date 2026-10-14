@@ -21,8 +21,8 @@ interface GradingContextType {
   students: Student[];
   subjects: Subject[];
   marks: Record<string, Record<string, MarkValue>>; // [studentId][subjectCode] for active exam
-  updateMark: (studentId: string, subjectCode: string, value: MarkValue) => Promise<void>;
-  batchUpdateMarks: (updates: Array<{ studentId: string; subjectCode: string; value: MarkValue }>) => Promise<void>;
+  updateMark: (examId: string, studentId: string, subjectCode: string, value: MarkValue) => Promise<void>;
+  batchUpdateMarks: (examId: string, updates: Array<{ studentId: string; subjectCode: string; value: MarkValue }>) => Promise<void>;
   importMarksFromCSV: (examId: string, csvContent: string) => Promise<any>;
   downloadMarksTemplateCSV: () => void;
   addStudent: (student: Omit<Student, 'id'>) => Promise<string>;
@@ -95,14 +95,12 @@ export const GradingProvider: React.FC<{ children: React.ReactNode }> = ({ child
     await store.setSchoolConfig(config);
   };
 
-  const updateMark = async (studentId: string, subjectCode: string, value: MarkValue) => {
-    if (!store.activeExamId) return;
-    await store.updateMark(store.activeExamId, studentId, subjectCode, value);
+  const updateMark = async (examId: string, studentId: string, subjectCode: string, value: MarkValue) => {
+    await store.updateMark(examId, studentId, subjectCode, value);
   };
 
-  const batchUpdateMarks = async (updates: Array<{ studentId: string; subjectCode: string; value: MarkValue }>) => {
-    if (!store.activeExamId) return;
-    await store.batchUpdateMarks(store.activeExamId, updates);
+  const batchUpdateMarks = async (examId: string, updates: Array<{ studentId: string; subjectCode: string; value: MarkValue }>) => {
+    await store.batchUpdateMarks(examId, updates);
   };
 
   const importMarksFromCSV = async (examId: string, csvContent: string) => {

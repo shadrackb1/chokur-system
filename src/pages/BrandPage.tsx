@@ -4,7 +4,7 @@ import { Logo } from '../components/brand/Logo';
 export default function BrandPage() {
   // Inject noindex meta tag for this internal page
   useEffect(() => {
-    let meta = document.querySelector('meta[name="robots"]');
+    let meta = document.querySelector('meta[name="robots"]') as HTMLMetaElement | null;
     if (!meta) {
       meta = document.createElement('meta');
       meta.name = 'robots';
