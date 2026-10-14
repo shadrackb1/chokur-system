@@ -127,27 +127,20 @@ const PublicRoutes: React.FC = () => {
 // This component MUST be inside BrowserRouter to use useLocation()
 const RootRouter: React.FC = () => {
   const location = useLocation();
-  const [showApp, setShowApp] = useState(false);
+  const [showApp, setShowApp] = useState(true);
   const [checked, setChecked] = useState(false);
 
   useEffect(() => {
-    // Check if user has existing data (localStorage/IndexedDB) or is "signed in"
-    const hasData = localStorage.getItem('chokur-data') !== null || 
-                    sessionStorage.getItem('chokur-session') !== null;
-    const hasDemoData = localStorage.getItem('chokur-demo-seeded') !== null;
-    
-    // Also check if we're on a deep app link
-    const isAppRoute = location.pathname.startsWith('/overview') ||
-                       location.pathname.startsWith('/marks-entry') ||
-                       location.pathname.startsWith('/rankings') ||
-                       location.pathname.startsWith('/subject-analysis') ||
-                       location.pathname.startsWith('/grade-distribution') ||
-                       location.pathname.startsWith('/report-cards') ||
-                       location.pathname.startsWith('/students') ||
-                       location.pathname.startsWith('/settings') ||
-                       location.pathname.startsWith('/app/');
+    // Check if we're on a public route (landing, demo, privacy, terms, brand, 404)
+    const isPublicRoute = location.pathname === '/' ||
+                          location.pathname.startsWith('/welcome') ||
+                          location.pathname.startsWith('/demo') ||
+                          location.pathname.startsWith('/privacy') ||
+                          location.pathname.startsWith('/terms') ||
+                          location.pathname.startsWith('/brand') ||
+                          location.pathname.startsWith('/404');
 
-    setShowApp(hasData || hasDemoData || isAppRoute);
+    setShowApp(!isPublicRoute);
     setChecked(true);
   }, [location.pathname]);
 
