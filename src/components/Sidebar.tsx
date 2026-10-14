@@ -22,23 +22,21 @@ export const Sidebar: React.FC = () => {
   const { activeView, setActiveView } = useGrading();
 
   return (
-    <aside className="fixed top-0 left-0 h-full w-[220px] flex flex-col justify-between py-4 z-40 bg-[#FEF9EF] border-r border-[#DDD6C7] select-none">
+    <aside className="fixed top-0 left-0 h-full w-[var(--sidebar-width)] flex flex-col justify-between py-4 z-40 bg-surface-panel border-r border-hairline select-none">
       {/* Top Header & Brand */}
       <div>
-        <div className="px-4 pb-4 mb-2 border-b border-[#DDD6C7] flex items-center gap-2.5">
-          <div className="w-6 h-6 rounded-none bg-[#111111] flex items-center justify-center text-[#FBF8F1] font-tabular-sm text-[11px] font-bold">
+        <div className="px-4 pb-4 mb-4 border-b border-hairline flex items-center gap-3">
+          <div className="w-8 h-8 rounded-none bg-primary flex items-center justify-center text-inverse font-mono text-tabular-xs font-bold">
             CK
           </div>
-          <div className="leading-none">
-            <span className="font-headline-md text-headline-md text-[#111111] font-semibold tracking-tight">Chokur</span>
-            <span className="font-caption text-caption text-[#5F5E5E] block mt-0.5 uppercase tracking-wider text-[10px]">
-              System
-            </span>
+          <div className="leading-tight">
+            <span className="text-h3 text-primary font-semibold tracking-tight">Chokur</span>
+            <span className="text-caption text-tertiary block mt-0.5 uppercase tracking-wider">System</span>
           </div>
         </div>
 
         {/* Navigation list */}
-        <nav className="flex flex-col space-y-0.5 px-0">
+        <nav className="flex flex-col space-y-0.5 px-2">
           {NAV_ITEMS.map((item) => {
             const isActive = activeView === item.id;
             return (
@@ -46,16 +44,17 @@ export const Sidebar: React.FC = () => {
                 key={item.id}
                 onClick={() => setActiveView(item.id)}
                 type="button"
-                className={`w-full text-left transition-colors duration-150 flex items-center gap-3 cursor-pointer ${
-                  isActive
-                    ? 'border-l-2 border-[#C2410C] text-[#111111] font-headline-sm text-headline-sm bg-[#FBF8F1] pl-3 py-2.5'
-                    : 'text-[#5F5E5E] hover:text-[#111111] hover:bg-[#F2EDE3] pl-3.5 py-2.5 font-body-md text-body-md'
-                }`}
+                className={`
+                  w-full text-left transition-base flex items-center gap-3 cursor-pointer rounded-sm
+                  ${isActive
+                    ? 'border-l-2 border-brand text-primary font-h3 bg-surface-container pl-3 py-2.5'
+                    : 'text-secondary hover:text-primary hover:bg-surface-container pl-3.5 py-2.5 text-body'}
+                `}
               >
                 <span
-                  className={`material-symbols-outlined text-[18px] ${
-                    isActive ? 'text-[#C2410C]' : 'text-[#5F5E5E]'
-                  }`}
+                  className={`
+                    material-symbols-outlined text-[18px] ${isActive ? 'text-brand' : 'text-tertiary'}
+                  `}
                 >
                   {item.icon}
                 </span>
@@ -67,29 +66,32 @@ export const Sidebar: React.FC = () => {
       </div>
 
       {/* Footer Navigation */}
-      <div className="pt-2 border-t border-[#DDD6C7] flex flex-col">
+      <div className="pt-4 border-t border-hairline flex flex-col">
         <button
           onClick={() => setActiveView('settings')}
           type="button"
-          className={`w-full text-left transition-colors duration-150 flex items-center gap-3 cursor-pointer ${
-            activeView === 'settings'
-              ? 'border-l-2 border-[#C2410C] text-[#111111] font-headline-sm text-headline-sm bg-[#FBF8F1] pl-3 py-2.5'
-              : 'text-[#5F5E5E] hover:text-[#111111] hover:bg-[#F2EDE3] pl-3.5 py-2.5 font-body-md text-body-md'
-          }`}
+          className={`
+            w-full text-left transition-base flex items-center gap-3 cursor-pointer rounded-sm
+            ${activeView === 'settings'
+              ? 'border-l-2 border-brand text-primary font-h3 bg-surface-container pl-3 py-2.5'
+              : 'text-secondary hover:text-primary hover:bg-surface-container pl-3.5 py-2.5 text-body'}
+          `}
         >
           <span
-            className={`material-symbols-outlined text-[18px] ${
-              activeView === 'settings' ? 'text-[#C2410C]' : 'text-[#5F5E5E]'
-            }`}
+            className={`
+              material-symbols-outlined text-[18px] ${
+                activeView === 'settings' ? 'text-brand' : 'text-tertiary'
+              }
+            `}
           >
             settings
           </span>
           <span>Settings</span>
         </button>
 
-        <div className="px-4 pt-3 pb-1 flex items-center justify-between text-[#9A958A] font-caption text-[11px]">
+        <div className="px-4 pt-4 pb-2 flex items-center justify-between text-tertiary text-caption">
           <span>KCSE Module v2.4</span>
-          <span className="w-1.5 h-1.5 rounded-full bg-[#111111]"></span>
+          <span className="w-1.5 h-1.5 rounded-full bg-primary"></span>
         </div>
       </div>
     </aside>

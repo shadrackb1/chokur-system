@@ -37,7 +37,7 @@ export const MarksEntryView: React.FC = () => {
         inputRef.current?.select();
       }, 10);
     }
-  }, [focusedCell]);
+  }, [focusedCell, marks]);
 
   // Handle cell navigation
   const navigateCell = (deltaRow: number, deltaCol: number) => {
@@ -202,53 +202,53 @@ export const MarksEntryView: React.FC = () => {
   }, [rankings]);
 
   return (
-    <div className="p-6 max-w-[1400px] w-full mx-auto flex-1 flex flex-col">
+    <div className="p-6 max-w-[var(--content-max-width-wide)] w-full mx-auto flex-1 flex flex-col">
       {/* Header Section */}
       <section className="mb-4 flex flex-col md:flex-row md:items-baseline justify-between gap-1">
         <div>
-          <h1 className="font-headline-lg text-headline-lg text-[#111111] tracking-tight">Marks Entry</h1>
-          <p className="font-body-sm text-body-sm text-[#5F5E5E]">
+          <h1 className="text-h1 text-primary tracking-tight">Marks Entry</h1>
+          <p className="text-body-sm text-secondary">
             {activeStream} · {activeExam} · type marks, grades update live
           </p>
         </div>
         {saveToast && (
-          <div className="bg-[#111111] text-[#FEF9EF] px-3 py-1 rounded text-xs font-medium flex items-center gap-1.5 animate-fadeIn">
-            <span className="material-symbols-outlined text-[16px] text-emerald-400">check_circle</span>
+          <div className="bg-primary text-inverse px-3 py-1 rounded-sm text-xs font-medium flex items-center gap-1.5 animate-fadeIn">
+            <span className="material-symbols-outlined text-[16px] text-success">check_circle</span>
             <span>All records synchronized and saved locally</span>
           </div>
         )}
       </section>
 
       {/* Above-Grid Control Ribbon (Monochrome Legend & Actions) */}
-      <div className="py-2.5 mb-3 border-y border-[#DDD6C7] flex flex-wrap items-center justify-between gap-3 bg-[#FBF8F1] px-3 rounded">
+      <div className="py-2.5 mb-3 border-y border-hairline flex flex-wrap items-center justify-between gap-3 bg-surface-panel px-3 rounded-sm">
         {/* Grade-style Monochrome Legend */}
-        <div className="flex flex-wrap items-center gap-3 text-xs font-caption text-[#5F5E5E]">
-          <span className="font-label-caps text-label-caps text-[#111111] uppercase tracking-wider text-[10px]">
+        <div className="flex flex-wrap items-center gap-3 text-caption text-secondary">
+          <span className="text-label text-primary uppercase tracking-wider text-tabular-xs">
             KCSE SCALES:
           </span>
           <div className="flex items-center gap-1.5">
-            <span className="px-1.5 py-0.2 bg-[#111111] text-[#FBF8F1] font-tabular-sm text-[10px] rounded-[2px] leading-4">
+            <span className="px-1.5 py-0.2 bg-tier-honors-bg text-tier-honors-text font-mono font-semibold text-tabular-xs rounded-xs leading-4">
               A
             </span>
-            <span className="text-[#111111]">Solid: Honors (A–B+)</span>
+            <span className="text-primary">Solid: Honors (A–B+)</span>
           </div>
-          <span className="text-[#DDD6C7]">|</span>
+          <span className="text-hairline">|</span>
           <div className="flex items-center gap-1.5">
-            <span className="px-1.5 py-0.2 border border-[#111111] text-[#111111] font-tabular-sm text-[10px] rounded-[2px] leading-4 bg-transparent">
+            <span className="px-1.5 py-0.2 border border-tier-competent text-tier-competent font-mono font-semibold text-tabular-xs rounded-xs leading-4 bg-transparent">
               B
             </span>
-            <span className="text-[#111111]">Outline: Competent (B–C+)</span>
+            <span className="text-primary">Outline: Competent (B–C+)</span>
           </div>
-          <span className="text-[#DDD6C7]">|</span>
+          <span className="text-hairline">|</span>
           <div className="flex items-center gap-1.5">
-            <span className="px-1.5 py-0.2 border border-[#5C5850] text-[#5C5850] font-tabular-sm text-[10px] rounded-[2px] leading-4 bg-transparent">
+            <span className="px-1.5 py-0.2 border border-tier-marginal text-tier-marginal font-mono font-medium text-tabular-xs rounded-xs leading-4 bg-transparent">
               C
             </span>
             <span>Grey outline: Marginal (C–D+)</span>
           </div>
-          <span className="text-[#DDD6C7]">|</span>
+          <span className="text-hairline">|</span>
           <div className="flex items-center gap-1.5">
-            <span className="px-1.5 py-0.2 border border-dashed border-[#9A958A] text-[#9A958A] font-tabular-sm text-[10px] rounded-[2px] leading-4 bg-transparent">
+            <span className="px-1.5 py-0.2 border border-dashed border-tier-critical text-tier-critical font-mono font-medium text-tabular-xs rounded-xs leading-4 bg-transparent">
               E
             </span>
             <span>Dashed: Critical (D–E)</span>
@@ -260,7 +260,7 @@ export const MarksEntryView: React.FC = () => {
           <button
             onClick={() => setIsPastingModalOpen(true)}
             type="button"
-            className="px-3 py-1.5 text-body-sm text-[13px] font-medium text-[#111111] border border-[#111111] rounded bg-transparent hover:bg-[#F2EDE3] transition-colors flex items-center gap-1.5 cursor-pointer"
+            className="px-3 py-1.5 text-body-sm font-medium text-primary border border-primary rounded-sm bg-transparent hover:bg-surface-container-high transition-base flex items-center gap-1.5 cursor-pointer focus-ring"
           >
             <span className="material-symbols-outlined text-[16px]">content_paste</span>
             <span>Paste from Excel</span>
@@ -268,7 +268,7 @@ export const MarksEntryView: React.FC = () => {
           <button
             onClick={handleSaveAll}
             type="button"
-            className="px-4 py-1.5 text-body-sm text-[13px] font-medium text-[#FEF9EF] bg-[#C2410C] rounded hover:opacity-90 transition-opacity flex items-center gap-1.5 cursor-pointer"
+            className="px-4 py-1.5 text-body-sm font-medium text-inverse bg-brand rounded-sm hover:bg-brand-hover transition-base flex items-center gap-1.5 cursor-pointer focus-ring"
           >
             <span className="material-symbols-outlined text-[16px]">save</span>
             <span>Save all</span>
@@ -277,20 +277,20 @@ export const MarksEntryView: React.FC = () => {
       </div>
 
       {/* SPREADSHEET-STYLE GRID */}
-      <div className="flex-1 border border-[#DDD6C7] bg-[#FBF8F1] overflow-hidden flex flex-col">
+      <div className="flex-1 border border-hairline bg-surface-panel overflow-hidden flex flex-col">
         <div className="overflow-x-auto hide-scrollbar flex-1 relative max-h-[620px]">
           <table className="w-full border-collapse text-left border-spacing-0">
             {/* Table Header */}
             <thead>
-              <tr className="h-10 bg-[#FEF9EF] border-b border-[#DDD6C7] sticky top-0 z-30">
+              <tr className="h-12 bg-surface-panel border-b border-hairline sticky top-0 z-30">
                 {/* Sticky Left Student Column Header */}
                 <th
-                  className="sticky left-0 z-30 bg-[#FEF9EF] border-r border-[#DDD6C7] px-3 py-2 w-64 min-w-[240px]"
+                  className="sticky left-0 z-30 bg-surface-panel border-r border-hairline px-3 py-2 w-64 min-w-[240px]"
                   scope="col"
                 >
-                  <div className="flex items-center justify-between font-label-caps text-label-caps text-[#5F5E5E] uppercase tracking-wider text-[11px]">
+                  <div className="flex items-center justify-between text-label text-secondary uppercase tracking-wider">
                     <span>ADM / STUDENT NAME</span>
-                    <span className="material-symbols-outlined text-[14px]">unfold_more</span>
+                    <span className="material-symbols-outlined text-[14px] text-tertiary">unfold_more</span>
                   </div>
                 </th>
 
@@ -298,7 +298,7 @@ export const MarksEntryView: React.FC = () => {
                 {subjects.map((subj) => (
                   <th
                     key={subj.code}
-                    className="border-r border-[#DDD6C7] px-2 py-2 text-center w-20 min-w-[76px] font-label-caps text-label-caps text-[#5F5E5E]"
+                    className="border-r border-hairline px-2 py-2 text-center w-20 min-w-[76px] text-label text-secondary"
                     scope="col"
                   >
                     {subj.code}
@@ -307,19 +307,19 @@ export const MarksEntryView: React.FC = () => {
 
                 {/* Right Summary Columns */}
                 <th
-                  className="border-l-2 border-[#DDD6C7] border-r border-[#DDD6C7] px-2 py-2 text-center w-16 min-w-[64px] font-label-caps text-label-caps text-[#5F5E5E] bg-[#F8F3E9]"
+                  className="border-l-2 border-hairline border-r border-hairline px-2 py-2 text-center w-16 min-w-[64px] text-label text-secondary bg-surface-dim"
                   scope="col"
                 >
                   AVG
                 </th>
                 <th
-                  className="border-r border-[#DDD6C7] px-2 py-2 text-center w-20 min-w-[72px] font-label-caps text-label-caps text-[#5F5E5E] bg-[#F8F3E9]"
+                  className="border-r border-hairline px-2 py-2 text-center w-20 min-w-[72px] text-label text-secondary bg-surface-dim"
                   scope="col"
                 >
-                  AGG <span className="text-[9px] font-normal tracking-normal lowercase">(/84)</span>
+                  AGG <span className="text-tabular-xs font-normal tracking-normal lowercase">(/84)</span>
                 </th>
                 <th
-                  className="px-2 py-2 text-center w-16 min-w-[60px] font-label-caps text-label-caps text-[#5F5E5E] bg-[#F8F3E9]"
+                  className="px-2 py-2 text-center w-16 min-w-[60px] text-label text-secondary bg-surface-dim"
                   scope="col"
                 >
                   GRADE
@@ -328,19 +328,19 @@ export const MarksEntryView: React.FC = () => {
             </thead>
 
             {/* Table Body */}
-            <tbody className="divide-y divide-[#DDD6C7] font-tabular-sm text-tabular-sm text-[#111111]">
+            <tbody className="divide-y divide-hairline text-tabular-sm text-primary">
               {students.map((student) => {
                 const calc = rankingMap.get(student.id);
 
                 return (
-                  <tr key={student.id} className="h-[44px] hover:bg-[#F2EDE3] transition-colors">
+                  <tr key={student.id} className="h-11 hover:bg-surface-container-high transition-base">
                     {/* Sticky Left Column: Student */}
-                    <td className="sticky left-0 z-10 bg-[#FBF8F1] border-r border-[#DDD6C7] px-3 py-2 whitespace-nowrap">
+                    <td className="sticky left-0 z-10 bg-surface-panel border-r border-hairline px-3 py-2 whitespace-nowrap">
                       <div className="flex items-center gap-2.5">
-                        <span className="text-[#9A958A] font-tabular-sm text-[12px] w-12 tracking-tight">
+                        <span className="text-tertiary text-tabular-sm w-12 tracking-tight">
                           {student.admNo}
                         </span>
-                        <span className="font-body-md text-body-md text-[#111111] font-medium">
+                        <span className="text-body text-primary font-medium">
                           {student.name}
                         </span>
                       </div>
@@ -360,9 +360,9 @@ export const MarksEntryView: React.FC = () => {
                         return (
                           <td
                             key={subj.code}
-                            className="border-r border-[#DDD6C7] p-0 text-right bg-white relative z-20"
+                            className="border-r border-hairline p-0 text-right bg-surface-bright relative z-20"
                           >
-                            <div className="w-full h-[43px] border-b-2 border-[#C2410C] px-1 flex items-center justify-end gap-1">
+                            <div className="w-full h-[43px] border-b-2 border-brand px-1 flex items-center justify-end gap-1">
                               <input
                                 ref={inputRef}
                                 type="text"
@@ -370,10 +370,10 @@ export const MarksEntryView: React.FC = () => {
                                 onChange={(e) => setEditingValue(e.target.value)}
                                 onKeyDown={handleKeyDown}
                                 onBlur={() => handleCommitValue(editingValue)}
-                                className="w-12 text-right font-medium text-[#111111] text-[13px] bg-transparent outline-none border-none p-0 focus:ring-0"
+                                className="w-12 text-right font-medium text-primary text-body-sm bg-transparent outline-none border-none p-0 focus:ring-0"
                                 maxLength={3}
                               />
-                              <span className="w-[1.5px] h-3.5 bg-[#C2410C] inline-block caret-blink"></span>
+                              <span className="w-[1.5px] h-3.5 bg-brand inline-block caret-blink"></span>
                               {editingValue && !isNaN(parseInt(editingValue, 10)) && (
                                 <GradeChip
                                   grade={getGradeFromScore(parseInt(editingValue, 10)).grade}
@@ -391,44 +391,49 @@ export const MarksEntryView: React.FC = () => {
                           onClick={() =>
                             setFocusedCell({ studentId: student.id, subjectCode: subj.code })
                           }
-                          className={`border-r border-[#DDD6C7] px-2 text-right cursor-pointer select-none transition-colors ${
-                            isAbsent
-                              ? 'bg-[#F2EDE3]'
-                              : numVal !== null && numVal < 30
-                              ? 'bg-[#FBF8F1]'
-                              : 'hover:bg-[#EDE8DE]'
-                          }`}
+                          className={`
+                            border-r border-hairline px-2 text-right cursor-pointer select-none transition-base
+                            ${
+                              isAbsent
+                                ? 'bg-surface-container-high'
+                                : numVal !== null && numVal < 30
+                                ? 'bg-surface-panel'
+                                : 'hover:bg-surface-container-high'
+                            }
+                          `}
                         >
                           {isAbsent ? (
-                            <span className="text-[#5F5E5E] font-tabular-sm font-semibold tracking-wider text-[11px] block text-center">
+                            <span className="text-secondary font-mono font-semibold tracking-wider text-tabular-xs block text-center">
                               ABS
                             </span>
                           ) : numVal !== null ? (
                             <div className="flex items-center justify-end gap-1.5">
                               <span
-                                className={`font-tabular-sm ${
-                                  numVal >= 80 ? 'font-medium' : numVal < 35 ? 'text-[#9A958A]' : ''
-                                }`}
+                                className={`
+                                  font-mono ${
+                                    numVal >= 80 ? 'font-medium' : numVal < 35 ? 'text-tertiary' : ''
+                                  }
+                                `}
                               >
                                 {numVal}
                               </span>
                               {gradeRes && <GradeChip grade={gradeRes.grade} />}
                             </div>
                           ) : (
-                            <span className="text-[#DDD6C7]">—</span>
+                            <span className="text-tertiary">—</span>
                           )}
                         </td>
                       );
                     })}
 
                     {/* Right Summaries */}
-                    <td className="border-l-2 border-[#DDD6C7] border-r border-[#DDD6C7] px-2 text-right font-medium bg-[#F8F3E9]">
+                    <td className="border-l-2 border-hairline border-r border-hairline px-2 text-right font-medium bg-surface-dim">
                       {calc ? calc.average.toFixed(1) : '—'}
                     </td>
-                    <td className="border-r border-[#DDD6C7] px-2 text-right font-medium bg-[#F8F3E9]">
+                    <td className="border-r border-hairline px-2 text-right font-medium bg-surface-dim">
                       {calc ? calc.aggregate : '—'}
                     </td>
-                    <td className="px-2 text-center bg-[#F8F3E9]">
+                    <td className="px-2 text-center bg-surface-dim">
                       {calc ? <GradeChip grade={calc.meanGrade} /> : '—'}
                     </td>
                   </tr>
@@ -438,20 +443,20 @@ export const MarksEntryView: React.FC = () => {
 
             {/* Table Footer: Subject Averages */}
             <tfoot>
-              <tr className="h-11 bg-[#F2EDE3] border-t-2 border-[#DDD6C7] font-tabular-sm text-tabular-sm font-semibold text-[#111111] sticky bottom-0 z-20">
-                <td className="sticky left-0 z-20 bg-[#F2EDE3] border-r border-[#DDD6C7] px-3 py-2 text-left uppercase text-[11px] font-label-caps tracking-wider text-[#5C5850]">
+              <tr className="h-11 bg-surface-container-high border-t-2 border-hairline text-tabular-sm font-semibold text-primary sticky bottom-0 z-20">
+                <td className="sticky left-0 z-20 bg-surface-container-high border-r border-hairline px-3 py-2 text-left uppercase text-tabular-xs text-label tracking-wider text-secondary">
                   Subject average
                 </td>
                 {subjectAverages.map((avg, idx) => (
-                  <td key={subjects[idx].code} className="border-r border-[#DDD6C7] px-2 text-right font-semibold">
+                  <td key={subjects[idx].code} className="border-r border-hairline px-2 text-right font-semibold">
                     {avg}
                   </td>
                 ))}
                 {/* Class Grand Summary */}
-                <td className="border-l-2 border-[#DDD6C7] border-r border-[#DDD6C7] px-2 text-right font-semibold text-[#C2410C]">
+                <td className="border-l-2 border-hairline border-r border-hairline px-2 text-right font-semibold text-brand">
                   {classAvg}
                 </td>
-                <td className="border-r border-[#DDD6C7] px-2 text-right font-semibold">
+                <td className="border-r border-hairline px-2 text-right font-semibold">
                   {classAgg}
                 </td>
                 <td className="px-2 text-center">
@@ -464,14 +469,14 @@ export const MarksEntryView: React.FC = () => {
       </div>
 
       {/* BELOW THE GRID: KEYBOARD SHORTCUTS HINTS */}
-      <footer className="mt-3 pt-2 border-t border-[#DDD6C7] flex flex-wrap items-center justify-between text-caption font-caption text-[#5F5E5E]">
+      <footer className="mt-3 pt-2 border-t border-hairline flex flex-wrap items-center justify-between text-caption text-secondary gap-2">
         <div className="flex items-center gap-2">
-          <span className="w-2 h-2 rounded-full bg-emerald-700"></span>
-          <span className="text-[#5C5850]">
+          <span className="w-2 h-2 rounded-full bg-success"></span>
+          <span className="text-secondary-dark">
             Ledger synchronized · {students.length}/{students.length} student records active
           </span>
         </div>
-        <div className="text-[#9A958A] tracking-tight text-[12px] font-caption">
+        <div className="text-tertiary tracking-tight text-tabular-xs">
           Tab next cell · Enter down · A for absent · Ctrl+S save
         </div>
       </footer>
@@ -479,19 +484,19 @@ export const MarksEntryView: React.FC = () => {
       {/* Paste from Excel Modal */}
       {isPastingModalOpen && (
         <div className="fixed inset-0 bg-black/40 z-50 flex items-center justify-center p-4">
-          <div className="bg-[#FEF9EF] border border-[#DDD6C7] rounded max-w-xl w-full p-6 shadow-md">
-            <div className="flex items-center justify-between mb-3 border-b border-[#DDD6C7] pb-3">
-              <h3 className="font-headline-sm text-headline-sm text-[#111111]">Paste Marks from Spreadsheet</h3>
+          <div className="bg-surface-panel border border-hairline rounded-sm max-w-xl w-full p-6 shadow-lg">
+            <div className="flex items-center justify-between mb-3 border-b border-hairline pb-3">
+              <h3 className="text-h3 text-primary">Paste Marks from Spreadsheet</h3>
               <button
                 onClick={() => setIsPastingModalOpen(false)}
-                className="text-[#5F5E5E] hover:text-[#111111] text-lg font-bold cursor-pointer"
+                className="text-secondary hover:text-primary text-lg font-bold cursor-pointer focus-ring"
               >
                 ✕
               </button>
             </div>
-            <p className="font-body-sm text-body-sm text-[#5F5E5E] mb-3">
+            <p className="text-body-sm text-secondary mb-3">
               Copy a grid of numbers from Excel or Google Sheets (columns corresponding to{' '}
-              <span className="font-medium text-[#111111]">
+              <span className="font-medium text-primary">
                 MAT, ENG, KIS, BIO, CHE, PHY, HIS, GEO, CRE, BST
               </span>
               ) and paste below.
@@ -499,24 +504,23 @@ export const MarksEntryView: React.FC = () => {
             <textarea
               value={pastedText}
               onChange={(e) => setPastedText(e.target.value)}
-              placeholder="Paste tab-delimited cells here..."
-              rows={8}
-              className="w-full bg-[#FBF8F1] border border-[#DDD6C7] rounded p-3 font-tabular-sm text-xs text-[#111111] focus:border-[#C2410C] focus:outline-none"
+              placeholder="Paste tab-separated values here..."
+              className="w-full h-40 bg-surface-bright border border-hairline rounded-sm px-3 py-2 text-body text-primary placeholder:text-tertiary focus:outline-none focus:border-brand focus:ring-0 mb-4 font-mono text-tabular-sm resize-none"
             />
-            <div className="flex items-center justify-end gap-3 mt-4">
+            <div className="flex justify-end gap-2">
               <button
                 onClick={() => setIsPastingModalOpen(false)}
                 type="button"
-                className="px-4 py-2 text-sm text-[#5F5E5E] hover:text-[#111111] cursor-pointer"
+                className="px-4 py-1.5 text-body-sm font-medium text-primary border border-hairline rounded-sm bg-transparent hover:bg-surface-container transition-base cursor-pointer focus-ring"
               >
                 Cancel
               </button>
               <button
                 onClick={handleProcessExcelPaste}
                 type="button"
-                className="px-4 py-2 text-sm font-medium bg-[#C2410C] text-[#FEF9EF] rounded hover:opacity-90 transition-opacity cursor-pointer"
+                className="px-4 py-1.5 text-body-sm font-medium text-inverse bg-brand rounded-sm hover:bg-brand-hover transition-base cursor-pointer focus-ring"
               >
-                Apply Marks
+                Apply
               </button>
             </div>
           </div>

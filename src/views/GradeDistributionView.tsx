@@ -95,15 +95,15 @@ export const GradeDistributionView: React.FC = () => {
       : subjects.find((s) => s.code === selectedSubjectFilter)?.name || selectedSubjectFilter;
 
   return (
-    <div className="max-w-[1200px] mx-auto px-6 py-8">
+    <div className="max-w-[var(--content-max-width)] mx-auto px-6 py-8">
       {/* Header & Top Context Toolbar */}
-      <section className="mb-6 pb-6 border-b border-[#DDD6C7]">
+      <section className="mb-6 pb-6 border-b border-hairline">
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
           <div>
-            <h1 className="font-headline-lg text-headline-lg text-[#111111] tracking-tight">
+            <h1 className="text-h1 text-primary tracking-tight">
               Grade Distribution
             </h1>
-            <p className="font-body-md text-body-md text-[#5F5E5E] mt-0.5">
+            <p className="text-body text-secondary mt-0.5">
               How the class spreads from A to E
             </p>
           </div>
@@ -115,25 +115,26 @@ export const GradeDistributionView: React.FC = () => {
               <button
                 onClick={() => setShowSubjectDropdown(!showSubjectDropdown)}
                 type="button"
-                className="inline-flex items-center gap-2 bg-[#FBF8F1] border border-[#DDD6C7] rounded px-3.5 py-1.5 text-[#111111] font-body-sm text-body-sm hover:bg-[#F2EDE3] transition-colors cursor-pointer"
+                className="inline-flex items-center gap-2 bg-surface-panel border border-hairline rounded-sm px-3.5 py-1.5 text-primary text-body-sm hover:bg-surface-container-high transition-base cursor-pointer focus-ring"
               >
                 <span>{selectedSubjectName}</span>
-                <span className="material-symbols-outlined text-[16px] text-[#5F5E5E]">expand_more</span>
+                <span className="material-symbols-outlined text-[16px] text-tertiary">expand_more</span>
               </button>
 
               {showSubjectDropdown && (
-                <div className="absolute right-0 top-full mt-1 w-60 bg-[#FBF8F1] border border-[#DDD6C7] shadow-sm py-1 z-50">
+                <div className="absolute right-0 top-full mt-1.5 w-72 bg-surface-panel border border-hairline shadow-lg py-1 rounded-sm z-50">
                   <button
                     onClick={() => {
                       setSelectedSubjectFilter('ALL');
                       setShowSubjectDropdown(false);
                     }}
-                    className={`w-full text-left px-3 py-1.5 text-xs hover:bg-[#F2EDE3] flex items-center justify-between cursor-pointer ${
-                      selectedSubjectFilter === 'ALL' ? 'font-medium text-[#C2410C]' : 'text-[#111111]'
-                    }`}
+                    className={`
+                      w-full text-left px-3 py-1.5 text-body-sm hover:bg-surface-container-high transition-base cursor-pointer flex items-center justify-between
+                      ${selectedSubjectFilter === 'ALL' ? 'font-medium text-brand' : 'text-primary'}
+                    `}
                   >
                     <span>All subjects (mean grade)</span>
-                    {selectedSubjectFilter === 'ALL' && <span>✓</span>}
+                    {selectedSubjectFilter === 'ALL' && <span className="text-tabular-xs font-bold text-brand">✓</span>}
                   </button>
                   {subjects.map((s) => (
                     <button
@@ -142,16 +143,15 @@ export const GradeDistributionView: React.FC = () => {
                         setSelectedSubjectFilter(s.code);
                         setShowSubjectDropdown(false);
                       }}
-                      className={`w-full text-left px-3 py-1.5 text-xs hover:bg-[#F2EDE3] flex items-center justify-between cursor-pointer ${
-                        selectedSubjectFilter === s.code
-                          ? 'font-medium text-[#C2410C]'
-                          : 'text-[#111111]'
-                      }`}
+                      className={`
+                        w-full text-left px-3 py-1.5 text-body-sm hover:bg-surface-container-high transition-base cursor-pointer flex items-center justify-between
+                        ${selectedSubjectFilter === s.code ? 'font-medium text-brand' : 'text-primary'}
+                      `}
                     >
                       <span>
                         {s.code} - {s.name}
                       </span>
-                      {selectedSubjectFilter === s.code && <span>✓</span>}
+                      {selectedSubjectFilter === s.code && <span className="text-tabular-xs font-bold text-brand">✓</span>}
                     </button>
                   ))}
                 </div>
@@ -162,7 +162,7 @@ export const GradeDistributionView: React.FC = () => {
             <button
               onClick={handleExportDistribution}
               type="button"
-              className="inline-flex items-center gap-1.5 bg-transparent border border-[#111111] rounded px-3.5 py-1.5 text-[#111111] font-body-sm text-body-sm hover:bg-[#111111] hover:text-[#FBF8F1] transition-colors cursor-pointer"
+              className="inline-flex items-center gap-1.5 bg-transparent border border-primary rounded-sm px-3.5 py-1.5 text-primary text-body-sm hover:bg-primary hover:text-inverse transition-base cursor-pointer focus-ring"
             >
               <span className="material-symbols-outlined text-[16px]">file_download</span>
               <span>Export distribution</span>
@@ -172,12 +172,12 @@ export const GradeDistributionView: React.FC = () => {
       </section>
 
       {/* Monochrome Column Chart Section */}
-      <section className="bg-[#FBF8F1] border border-[#DDD6C7] p-6 mb-6">
+      <section className="bg-surface-panel border border-hairline p-6 mb-6 rounded-sm">
         <div className="flex justify-between items-center mb-6">
-          <div className="font-label-caps text-label-caps text-[#5F5E5E] tracking-wider uppercase">
+          <div className="text-label text-secondary tracking-wider uppercase">
             AGGREGATED LETTER GRADE FREQUENCY
           </div>
-          <div className="font-tabular-sm text-tabular-sm text-[#5F5E5E]">
+          <div className="text-tabular-sm text-secondary">
             Total cohort: {rankings.length} candidates evaluated
           </div>
         </div>
@@ -185,41 +185,41 @@ export const GradeDistributionView: React.FC = () => {
         {/* The Chart Area */}
         <div className="relative w-full h-[280px] flex flex-col justify-end pt-8 pb-8 px-4">
           {/* Horizontal Hairline Reference Gridlines */}
-          <div className="absolute inset-x-0 top-8 border-b border-[#DDD6C7] flex justify-end pr-2">
-            <span className="font-tabular-sm text-tabular-sm text-[#9A958A] -mt-2">12 (38%)</span>
+          <div className="absolute inset-x-0 top-8 border-b border-hairline flex justify-end pr-2">
+            <span className="text-tabular-sm text-tertiary -mt-2">12 (38%)</span>
           </div>
-          <div className="absolute inset-x-0 top-[110px] border-b border-[#DDD6C7] flex justify-end pr-2">
-            <span className="font-tabular-sm text-tabular-sm text-[#9A958A] -mt-2">8 (25%)</span>
+          <div className="absolute inset-x-0 top-[110px] border-b border-hairline flex justify-end pr-2">
+            <span className="text-tabular-sm text-tertiary -mt-2">8 (25%)</span>
           </div>
-          <div className="absolute inset-x-0 top-[180px] border-b border-[#DDD6C7] flex justify-end pr-2">
-            <span className="font-tabular-sm text-tabular-sm text-[#9A958A] -mt-2">4 (13%)</span>
+          <div className="absolute inset-x-0 top-[180px] border-b border-hairline flex justify-end pr-2">
+            <span className="text-tabular-sm text-tertiary -mt-2">4 (13%)</span>
           </div>
-          <div className="absolute inset-x-0 bottom-8 border-b border-[#111111]"></div>
+          <div className="absolute inset-x-0 bottom-8 border-b border-primary"></div>
 
           {/* 5 Columns Grid */}
           <div className="relative z-10 grid grid-cols-5 gap-6 sm:gap-12 h-full items-end pb-0.5">
             {letterCategoryStats.map((cat) => {
-              // Tallest bar gets solid black fill, others secondary grey fill
+              // Tallest bar gets primary fill, others secondary fill
               const isTallest = cat.count === maxBarCount && cat.count > 0;
               const barHeightPct = maxBarCount > 0 ? (cat.count / maxBarCount) * 85 : 0;
 
               return (
                 <div key={cat.letter} className="flex flex-col items-center h-full justify-end group">
-                  <div className="font-tabular-sm text-tabular-sm text-[#111111] mb-2 text-center whitespace-nowrap">
+                  <div className="text-tabular-sm text-primary mb-2 text-center whitespace-nowrap">
                     <span className={isTallest ? 'font-semibold' : ''}>{cat.count}</span>{' '}
-                    <span className="text-[#5F5E5E]">· {cat.pct}%</span>
+                    <span className="text-secondary">· {cat.pct}%</span>
                   </div>
 
                   <div
                     className={`w-full max-w-[68px] transition-all duration-300 ${
-                      isTallest ? 'bg-[#111111]' : 'bg-[#5F5E5E]'
-                    }`}
+                      isTallest ? 'bg-primary' : 'bg-secondary'
+                    } rounded-xs`}
                     style={{ height: `${Math.max(4, barHeightPct)}%` }}
                   ></div>
 
                   <div
-                    className={`mt-3 font-tabular-md text-tabular-md ${
-                      isTallest ? 'font-bold text-[#111111]' : 'font-semibold text-[#111111]'
+                    className={`mt-3 text-tabular-md ${
+                      isTallest ? 'font-bold text-primary' : 'font-semibold text-primary'
                     }`}
                   >
                     {cat.letter}
@@ -231,32 +231,32 @@ export const GradeDistributionView: React.FC = () => {
         </div>
 
         {/* Under-chart Text Note */}
-        <div className="mt-4 pt-3 border-t border-[#DDD6C7] flex items-center justify-between">
-          <div className="text-[#C2410C] font-body-sm text-body-sm font-medium flex items-center gap-1.5">
+        <div className="mt-4 pt-3 border-t border-hairline flex items-center justify-between">
+          <div className="text-brand text-body-sm font-medium flex items-center gap-1.5">
             <span>Show all 12 grades (A, A-, B+, B, B-, C+, C, C-, D+, D, D-, E)</span>
             <span className="material-symbols-outlined text-[16px]">arrow_downward</span>
           </div>
-          <span className="font-caption text-caption text-[#5F5E5E]">
+          <span className="text-caption text-secondary">
             Scale: Kenya Certificate of Secondary Education (KCSE)
           </span>
         </div>
       </section>
 
       {/* Key Finding Callout Sentence */}
-      <section className="py-4 border-b border-[#DDD6C7] mb-6">
-        <blockquote className="font-headline-md text-headline-md font-semibold text-[#111111] tracking-tight">
-          “Most of the class sits at C to B-, with a small tail of four students at E.”
+      <section className="py-4 border-b border-hairline mb-6">
+        <blockquote className="text-h2 text-primary font-semibold tracking-tight">
+          "Most of the class sits at C to B-, with a small tail of four students at E."
         </blockquote>
       </section>
 
       {/* Compact Three-Line Summary Statistics */}
-      <section className="border-y border-[#DDD6C7] divide-y divide-[#DDD6C7] mb-8 bg-[#FBF8F1]">
+      <section className="border-y border-hairline divide-y divide-hairline mb-8 bg-surface-panel">
         {/* Row 1: Mean Grade */}
         <div className="flex items-center justify-between py-3.5 px-4">
-          <span className="font-body-md text-body-md text-[#5F5E5E]">Class mean grade</span>
+          <span className="text-body text-secondary">Class mean grade</span>
           <div className="flex items-baseline gap-2">
-            <span className="font-tabular-lg text-tabular-lg font-bold text-[#111111]">{meanGrade}</span>
-            <span className="font-tabular-sm text-tabular-sm text-[#5F5E5E]">
+            <span className="text-tabular-lg font-bold text-primary">{meanGrade}</span>
+            <span className="text-tabular-sm text-secondary">
               ({classAverage.toFixed(1)} pts)
             </span>
           </div>
@@ -264,12 +264,12 @@ export const GradeDistributionView: React.FC = () => {
 
         {/* Row 2: University Pass Rate */}
         <div className="flex items-center justify-between py-3.5 px-4">
-          <span className="font-body-md text-body-md text-[#5F5E5E]">
-            University pass rate (C+ &amp; above)
+          <span className="text-body text-secondary">
+            University pass rate (C+ & above)
           </span>
           <div className="flex items-baseline gap-2">
-            <span className="font-tabular-lg text-tabular-lg font-bold text-[#111111]">{passRate}%</span>
-            <span className="font-tabular-sm text-tabular-sm text-[#5F5E5E]">
+            <span className="text-tabular-lg font-bold text-primary">{passRate}%</span>
+            <span className="text-tabular-sm text-secondary">
               ({qualifiedCount} of {rankings.length} candidates)
             </span>
           </div>
@@ -277,10 +277,10 @@ export const GradeDistributionView: React.FC = () => {
 
         {/* Row 3: Below Cutoff */}
         <div className="flex items-center justify-between py-3.5 px-4">
-          <span className="font-body-md text-body-md text-[#5F5E5E]">Students below C+ threshold</span>
-          <div className="font-tabular-lg text-tabular-lg font-bold text-[#111111]">
+          <span className="text-body text-secondary">Students below C+ threshold</span>
+          <div className="text-tabular-lg font-bold text-primary">
             {belowCutoffCount}{' '}
-            <span className="font-body-sm text-body-sm font-normal text-[#5F5E5E]">students</span>
+            <span className="text-body-sm font-normal text-secondary">students</span>
           </div>
         </div>
       </section>
@@ -288,70 +288,70 @@ export const GradeDistributionView: React.FC = () => {
       {/* Detailed 12-Grade Breakdown Table */}
       <section>
         <div className="flex items-center justify-between mb-3">
-          <h2 className="font-headline-sm text-headline-sm text-[#111111]">
+          <h2 className="text-h3 text-primary">
             KCSE Full 12-Grade Ledger Breakdown
           </h2>
-          <span className="font-label-caps text-label-caps text-[#5F5E5E] uppercase tracking-wider">
+          <span className="text-label text-secondary uppercase tracking-wider">
             Normative distribution
           </span>
         </div>
 
-        <div className="border border-[#DDD6C7] overflow-hidden bg-[#FBF8F1]">
+        <div className="border border-hairline rounded-sm overflow-hidden bg-surface-panel">
           <table className="w-full text-left border-collapse">
             <thead>
-              <tr className="border-b border-[#DDD6C7] bg-[#FEF9EF]">
-                <th className="py-2.5 px-4 font-label-caps text-label-caps text-[#5F5E5E] uppercase tracking-wider w-28">
+              <tr className="border-b border-hairline bg-surface-panel">
+                <th className="py-2.5 px-4 text-label text-secondary uppercase tracking-wider w-28">
                   KCSE Grade
                 </th>
-                <th className="py-2.5 px-4 font-label-caps text-label-caps text-[#5F5E5E] uppercase tracking-wider w-36">
+                <th className="py-2.5 px-4 text-label text-secondary uppercase tracking-wider w-36">
                   Points Equivalent
                 </th>
-                <th className="py-2.5 px-4 font-label-caps text-label-caps text-[#5F5E5E] uppercase tracking-wider text-right">
+                <th className="py-2.5 px-4 text-label text-secondary uppercase tracking-wider text-right">
                   Student Count
                 </th>
-                <th className="py-2.5 px-4 font-label-caps text-label-caps text-[#5F5E5E] uppercase tracking-wider text-right">
+                <th className="py-2.5 px-4 text-label text-secondary uppercase tracking-wider text-right">
                   Cohort Share
                 </th>
-                <th className="py-2.5 px-4 font-label-caps text-label-caps text-[#5F5E5E] uppercase tracking-wider text-right">
+                <th className="py-2.5 px-4 text-label text-secondary uppercase tracking-wider text-right">
                   Cumulative %
                 </th>
               </tr>
             </thead>
 
-            <tbody className="divide-y divide-[#DDD6C7] font-body-sm text-body-sm">
+            <tbody className="divide-y divide-hairline text-body-sm">
               {gradeDistributionTiers.map((tier) => {
                 const isCPlus = tier.grade === 'C+';
 
                 return (
                   <React.Fragment key={tier.grade}>
-                    <tr className="h-[44px] hover:bg-[#F2EDE3] transition-colors">
+                    <tr className="h-11 hover:bg-surface-container-high transition-base">
                       <td className="px-4">
                         <GradeChip grade={tier.grade} />
                       </td>
-                      <td className="px-4 font-tabular-sm text-tabular-sm text-[#5F5E5E]">
+                      <td className="px-4 text-tabular-sm text-secondary">
                         {tier.pointsEquivalent} Points
                       </td>
-                      <td className="px-4 text-right font-tabular-md text-tabular-md font-semibold text-[#111111]">
+                      <td className="px-4 text-right text-tabular-md font-semibold text-primary">
                         {tier.studentCount}
                       </td>
-                      <td className="px-4 text-right font-tabular-sm text-tabular-sm text-[#5F5E5E]">
+                      <td className="px-4 text-right text-tabular-sm text-secondary">
                         {tier.cohortShare.toFixed(1)}%
                       </td>
-                      <td className="px-4 text-right font-tabular-sm text-tabular-sm text-[#111111]">
+                      <td className="px-4 text-right text-tabular-sm text-primary">
                         {tier.cumulativePercentage.toFixed(1)}%
                       </td>
                     </tr>
 
                     {/* The Cutoff Boundary Line after C+ */}
                     {isCPlus && (
-                      <tr className="bg-[#FEF9EF]">
-                        <td colSpan={5} className="py-1 px-4 border-y-2 border-[#111111]">
+                      <tr className="bg-surface-panel">
+                        <td colSpan={5} className="py-1 px-4 border-y-2 border-primary">
                           <div className="flex items-center justify-between">
-                            <span className="font-label-caps text-label-caps text-[#111111] uppercase tracking-widest font-bold flex items-center gap-2">
-                              <span className="w-1.5 h-1.5 bg-[#111111] inline-block"></span>
+                            <span className="text-label text-primary uppercase tracking-widest font-bold flex items-center gap-2">
+                              <span className="w-1.5 h-1.5 bg-primary inline-block"></span>
                               C+ Cutoff Boundary — Minimum Direct University Entry Requirement
                             </span>
-                            <span className="font-tabular-sm text-tabular-sm text-[#111111] font-semibold">
+                            <span className="text-tabular-sm text-primary font-semibold">
                               KUCCPS Threshold
                             </span>
                           </div>
@@ -364,16 +364,16 @@ export const GradeDistributionView: React.FC = () => {
             </tbody>
 
             <tfoot>
-              <tr className="border-t-2 border-[#111111] bg-[#FEF9EF] font-semibold">
-                <td className="py-3 px-4 font-body-sm text-body-sm text-[#111111]">Total / Cohort</td>
-                <td className="py-3 px-4 font-tabular-sm text-tabular-sm text-[#5F5E5E]">—</td>
-                <td className="py-3 px-4 text-right font-tabular-md text-tabular-md text-[#111111]">
+              <tr className="border-t-2 border-primary bg-surface-panel font-semibold">
+                <td className="py-3 px-4 text-body-sm text-primary">Total / Cohort</td>
+                <td className="py-3 px-4 text-tabular-sm text-secondary">—</td>
+                <td className="py-3 px-4 text-right text-tabular-md text-primary">
                   {rankings.length} Candidates
                 </td>
-                <td className="py-3 px-4 text-right font-tabular-sm text-tabular-sm text-[#111111]">
+                <td className="py-3 px-4 text-right text-tabular-sm text-primary">
                   100.0%
                 </td>
-                <td className="py-3 px-4 text-right font-tabular-sm text-tabular-sm text-[#111111]">
+                <td className="py-3 px-4 text-right text-tabular-sm text-primary">
                   100.0%
                 </td>
               </tr>
@@ -383,9 +383,9 @@ export const GradeDistributionView: React.FC = () => {
       </section>
 
       {/* Archival Ledger Footer Note */}
-      <footer className="mt-8 pt-4 border-t border-[#DDD6C7] flex flex-col sm:flex-row items-start sm:items-center justify-between text-[#5F5E5E] font-caption text-caption gap-2 no-print">
+      <footer className="mt-8 pt-4 border-t border-hairline flex flex-col sm:flex-row items-start sm:items-center justify-between text-secondary text-caption gap-2 no-print">
         <div>Official Ministry of Education Grading Standard (KNEC) — Form 4 Academic Cycle</div>
-        <div className="font-tabular-sm text-tabular-sm">Chokur Archival Records • Ref: CK-2026-T2-F4E</div>
+        <div className="text-tabular-sm">Chokur Archival Records • Ref: CK-2026-T2-F4E</div>
       </footer>
     </div>
   );

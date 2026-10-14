@@ -1,0 +1,404 @@
+/**
+ * Chokur System — Design Tokens
+ * Single source of truth for colors, spacing, typography, shadows, and radii.
+ * All components must reference these tokens, never raw hex values.
+ */
+
+@layer base {
+  :root {
+    /* ── Color Palette ── */
+    /* Surface scale (lightest → darkest) */
+    --color-surface: #FEF9EF;
+    --color-surface-dim: #F8F3E9;
+    --color-surface-bright: #FFFFFF;
+    --color-surface-container-lowest: #FFFFFF;
+    --color-surface-container-low: #F8F3E9;
+    --color-surface-container: #F2EDE3;
+    --color-surface-container-high: #EDE8DE;
+    --color-surface-container-highest: #E7E2D8;
+    --color-surface-panel: #FBF8F1;
+
+    /* Borders / dividers */
+    --color-hairline: #DDD6C7;
+    --color-border-strong: #C9C2B0;
+    --color-border-brand: #C2410C;
+
+    /* Text hierarchy */
+    --color-text-primary: #111111;
+    --color-text-secondary: #5F5E5E;
+    --color-text-tertiary: #9A958A;
+    --color-text-inverse: #FEF9EF;
+    --color-text-brand: #C2410C;
+
+    /* Brand / accent */
+    --color-brand: #C2410C;
+    --color-brand-hover: #9B2F00;
+    --color-brand-light: #FFF1EC;
+    --color-brand-lighter: #FEF3EF;
+
+    /* Semantic tiers (map to KCSE tiers) */
+    --color-tier-honors: #111111;       /* A, A-, B+ */
+    --color-tier-honors-bg: #111111;
+    --color-tier-honors-text: #FEF9EF;
+
+    --color-tier-competent: #111111;    /* B, B-, C+ */
+    --color-tier-competent-border: #111111;
+    --color-tier-competent-text: #111111;
+
+    --color-tier-marginal: #5C5850;     /* C, C-, D+ */
+    --color-tier-marginal-border: #5C5850;
+    --color-tier-marginal-text: #5C5850;
+
+    --color-tier-critical: #9A958A;     /* D, D-, E */
+    --color-tier-critical-border: #9A958A;
+    --color-tier-critical-text: #9A958A;
+
+    /* Status */
+    --color-success: #166534;
+    --color-success-bg: #DCFCE7;
+    --color-warning: #854D0E;
+    --color-warning-bg: #FEF3C7;
+    --color-error: #991B1B;
+    --color-error-bg: #FEE2E2;
+
+    /* Focus ring */
+    --color-focus-ring: #C2410C;
+    --color-focus-ring-offset: #FEF9EF;
+
+    /* ── Spacing Scale (4px base) ── */
+    --space-1: 4px;
+    --space-2: 8px;
+    --space-3: 12px;
+    --space-4: 16px;
+    --space-5: 20px;
+    --space-6: 24px;
+    --space-8: 32px;
+    --space-10: 40px;
+    --space-12: 48px;
+    --space-16: 64px;
+    --space-20: 80px;
+    --space-24: 96px;
+
+    /* ── Typography Scale ── */
+    /* Font families */
+    --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    --font-mono: 'JetBrains Mono', monospace;
+    --font-symbols: 'Material Symbols Outlined';
+
+    /* Display / Stat (largest) */
+    --text-display-size: clamp(2rem, 1.75rem + 1.25vw, 2.25rem); /* 32-36px */
+    --text-display-line: 1.1;
+    --text-display-weight: 600;
+    --text-display-letter: -0.02em;
+
+    /* Headline Large */
+    --text-h1-size: clamp(1.75rem, 1.5rem + 1.25vw, 2rem); /* 28-32px */
+    --text-h1-line: 1.2;
+    --text-h1-weight: 600;
+    --text-h1-letter: -0.02em;
+
+    /* Headline Medium */
+    --text-h2-size: clamp(1.125rem, 1rem + 0.625vw, 1.25rem); /* 18-20px */
+    --text-h2-line: 1.3;
+    --text-h2-weight: 600;
+    --text-h2-letter: -0.01em;
+
+    /* Headline Small */
+    --text-h3-size: 0.9375rem; /* 15px */
+    --text-h3-line: 1.35;
+    --text-h3-weight: 600;
+    --text-h3-letter: 0;
+
+    /* Body Medium */
+    --text-body-size: 0.875rem; /* 14px */
+    --text-body-line: 1.5;
+    --text-body-weight: 400;
+    --text-body-letter: 0;
+
+    /* Body Small */
+    --text-body-sm-size: 0.8125rem; /* 13px */
+    --text-body-sm-line: 1.45;
+    --text-body-sm-weight: 400;
+
+    /* Label / Caps (UI labels, table headers) */
+    --text-label-size: 0.6875rem; /* 11px */
+    --text-label-line: 1.45;
+    --text-label-weight: 600;
+    --text-label-letter: 0.08em;
+    --text-label-transform: uppercase;
+
+    /* Caption (smallest UI text) */
+    --text-caption-size: 0.75rem; /* 12px */
+    --text-caption-line: 1.4;
+    --text-caption-weight: 400;
+
+    /* Tabular numbers (monospace, tabular-nums) */
+    --text-tabular-xs-size: 0.625rem; /* 10px */
+    --text-tabular-sm-size: 0.75rem;  /* 12px */
+    --text-tabular-md-size: 0.875rem; /* 14px */
+    --text-tabular-lg-size: 1rem;     /* 16px */
+    --text-tabular-line: 1.2;
+    --text-tabular-weight: 500;
+
+    /* ── Shadow Scale ── */
+    --shadow-xs: 0 1px 2px rgba(17, 17, 17, 0.04);
+    --shadow-sm: 0 1px 3px rgba(17, 17, 17, 0.06), 0 1px 2px rgba(17, 17, 17, 0.04);
+    --shadow-md: 0 4px 8px rgba(17, 17, 17, 0.08), 0 2px 4px rgba(17, 17, 17, 0.05);
+    --shadow-lg: 0 12px 24px rgba(17, 17, 17, 0.1), 0 4px 8px rgba(17, 17, 17, 0.06);
+    --shadow-xl: 0 20px 40px rgba(17, 17, 17, 0.12), 0 8px 16px rgba(17, 17, 17, 0.08);
+
+    /* ── Border Radius ── */
+    --radius-none: 0;
+    --radius-xs: 2px;
+    --radius-sm: 4px;
+    --radius-md: 6px;
+    --radius-lg: 8px;
+    --radius-xl: 12px;
+    --radius-full: 9999px;
+
+    /* ── Z-Index Scale ── */
+    --z-base: 1;
+    --z-dropdown: 50;
+    --z-sticky: 100;
+    --z-overlay: 200;
+    --z-modal: 300;
+    --z-toast: 400;
+    --z-tooltip: 500;
+
+    /* ── Transitions ── */
+    --transition-fast: 120ms ease;
+    --transition-base: 180ms ease;
+    --transition-slow: 250ms ease;
+
+    /* ── Layout ── */
+    --sidebar-width: 220px;
+    --header-height: 56px; /* 14 * 4px */
+    --content-max-width: 1200px;
+    --content-max-width-wide: 1400px;
+
+    /* ── Focus Ring (accessible) ── */
+    --focus-ring: 0 0 0 2px var(--color-focus-ring);
+    --focus-ring-inset: inset 0 0 0 2px var(--color-focus-ring);
+  }
+}
+
+/* ── Utility Classes (thin wrappers for tokens) ── */
+
+@layer utilities {
+  /* Surfaces */
+  .bg-surface { background-color: var(--color-surface); }
+  .bg-surface-panel { background-color: var(--color-surface-panel); }
+  .bg-surface-container { background-color: var(--color-surface-container); }
+  .bg-surface-container-low { background-color: var(--color-surface-container-low); }
+  .bg-surface-container-high { background-color: var(--color-surface-container-high); }
+  .bg-brand { background-color: var(--color-brand); }
+  .bg-brand-light { background-color: var(--color-brand-light); }
+  .bg-brand-lighter { background-color: var(--color-brand-lighter); }
+
+  /* Borders */
+  .border-hairline { border-color: var(--color-hairline); }
+  .border-strong { border-color: var(--color-border-strong); }
+  .border-brand { border-color: var(--color-brand); }
+  .border-tier-honors { border-color: var(--color-tier-honors); }
+  .border-tier-competent { border-color: var(--color-tier-competent-border); }
+  .border-tier-marginal { border-color: var(--color-tier-marginal-border); }
+  .border-tier-critical { border-color: var(--color-tier-critical-border); }
+
+  /* Text */
+  .text-primary { color: var(--color-text-primary); }
+  .text-secondary { color: var(--color-text-secondary); }
+  .text-tertiary { color: var(--color-text-tertiary); }
+  .text-inverse { color: var(--color-text-inverse); }
+  .text-brand { color: var(--color-brand); }
+  .text-tier-honors { color: var(--color-tier-honors); }
+  .text-tier-competent { color: var(--color-tier-competent-text); }
+  .text-tier-marginal { color: var(--color-tier-marginal-text); }
+  .text-tier-critical { color: var(--color-tier-critical-text); }
+
+  /* Font families */
+  .font-sans { font-family: var(--font-sans); }
+  .font-mono { font-family: var(--font-mono); font-variant-numeric: tabular-nums; }
+  .font-symbols { font-family: var(--font-symbols); }
+
+  /* Type scales */
+  .text-display {
+    font-size: var(--text-display-size);
+    line-height: var(--text-display-line);
+    font-weight: var(--text-display-weight);
+    letter-spacing: var(--text-display-letter);
+    font-family: var(--font-mono);
+  }
+
+  .text-h1 {
+    font-size: var(--text-h1-size);
+    line-height: var(--text-h1-line);
+    font-weight: var(--text-h1-weight);
+    letter-spacing: var(--text-h1-letter);
+    font-family: var(--font-sans);
+  }
+
+  .text-h2 {
+    font-size: var(--text-h2-size);
+    line-height: var(--text-h2-line);
+    font-weight: var(--text-h2-weight);
+    letter-spacing: var(--text-h2-letter);
+    font-family: var(--font-sans);
+  }
+
+  .text-h3 {
+    font-size: var(--text-h3-size);
+    line-height: var(--text-h3-line);
+    font-weight: var(--text-h3-weight);
+    letter-spacing: var(--text-h3-letter);
+    font-family: var(--font-sans);
+  }
+
+  .text-body {
+    font-size: var(--text-body-size);
+    line-height: var(--text-body-line);
+    font-weight: var(--text-body-weight);
+    font-family: var(--font-sans);
+  }
+
+  .text-body-sm {
+    font-size: var(--text-body-sm-size);
+    line-height: var(--text-body-sm-line);
+    font-weight: var(--text-body-sm-weight);
+    font-family: var(--font-sans);
+  }
+
+  .text-label {
+    font-size: var(--text-label-size);
+    line-height: var(--text-label-line);
+    font-weight: var(--text-label-weight);
+    letter-spacing: var(--text-label-letter);
+    text-transform: var(--text-label-transform);
+    font-family: var(--font-sans);
+  }
+
+  .text-caption {
+    font-size: var(--text-caption-size);
+    line-height: var(--text-caption-line);
+    font-weight: var(--text-caption-weight);
+    font-family: var(--font-sans);
+  }
+
+  .text-tabular-xs {
+    font-size: var(--text-tabular-xs-size);
+    line-height: var(--text-tabular-line);
+    font-weight: var(--text-tabular-weight);
+    font-family: var(--font-mono);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .text-tabular-sm {
+    font-size: var(--text-tabular-sm-size);
+    line-height: var(--text-tabular-line);
+    font-weight: var(--text-tabular-weight);
+    font-family: var(--font-mono);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .text-tabular-md {
+    font-size: var(--text-tabular-md-size);
+    line-height: var(--text-tabular-line);
+    font-weight: var(--text-tabular-weight);
+    font-family: var(--font-mono);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .text-tabular-lg {
+    font-size: var(--text-tabular-lg-size);
+    line-height: var(--text-tabular-line);
+    font-weight: var(--text-tabular-weight);
+    font-family: var(--font-mono);
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* Spacing */
+  .space-1 { gap: var(--space-1); }
+  .space-2 { gap: var(--space-2); }
+  .space-3 { gap: var(--space-3); }
+  .space-4 { gap: var(--space-4); }
+  .space-5 { gap: var(--space-5); }
+  .space-6 { gap: var(--space-6); }
+  .space-8 { gap: var(--space-8); }
+  .space-10 { gap: var(--space-10); }
+  .space-12 { gap: var(--space-12); }
+
+  .p-1 { padding: var(--space-1); }
+  .p-2 { padding: var(--space-2); }
+  .p-3 { padding: var(--space-3); }
+  .p-4 { padding: var(--space-4); }
+  .p-5 { padding: var(--space-5); }
+  .p-6 { padding: var(--space-6); }
+  .p-8 { padding: var(--space-8); }
+  .p-10 { padding: var(--space-10); }
+  .p-12 { padding: var(--space-12); }
+
+  .px-1 { padding-left: var(--space-1); padding-right: var(--space-1); }
+  .px-2 { padding-left: var(--space-2); padding-right: var(--space-2); }
+  .px-3 { padding-left: var(--space-3); padding-right: var(--space-3); }
+  .px-4 { padding-left: var(--space-4); padding-right: var(--space-4); }
+  .px-5 { padding-left: var(--space-5); padding-right: var(--space-5); }
+  .px-6 { padding-left: var(--space-6); padding-right: var(--space-6); }
+  .px-8 { padding-left: var(--space-8); padding-right: var(--space-8); }
+
+  .py-1 { padding-top: var(--space-1); padding-bottom: var(--space-1); }
+  .py-2 { padding-top: var(--space-2); padding-bottom: var(--space-2); }
+  .py-3 { padding-top: var(--space-3); padding-bottom: var(--space-3); }
+  .py-4 { padding-top: var(--space-4); padding-bottom: var(--space-4); }
+  .py-5 { padding-top: var(--space-5); padding-bottom: var(--space-5); }
+  .py-6 { padding-top: var(--space-6); padding-bottom: var(--space-6); }
+
+  .mb-1 { margin-bottom: var(--space-1); }
+  .mb-2 { margin-bottom: var(--space-2); }
+  .mb-3 { margin-bottom: var(--space-3); }
+  .mb-4 { margin-bottom: var(--space-4); }
+  .mb-5 { margin-bottom: var(--space-5); }
+  .mb-6 { margin-bottom: var(--space-6); }
+  .mb-8 { margin-bottom: var(--space-8); }
+
+  .mt-1 { margin-top: var(--space-1); }
+  .mt-2 { margin-top: var(--space-2); }
+  .mt-3 { margin-top: var(--space-3); }
+  .mt-4 { margin-top: var(--space-4); }
+  .mt-5 { margin-top: var(--space-5); }
+  .mt-6 { margin-top: var(--space-6); }
+  .mt-8 { margin-top: var(--space-8); }
+
+  /* Shadows */
+  .shadow-xs { box-shadow: var(--shadow-xs); }
+  .shadow-sm { box-shadow: var(--shadow-sm); }
+  .shadow-md { box-shadow: var(--shadow-md); }
+  .shadow-lg { box-shadow: var(--shadow-lg); }
+  .shadow-xl { box-shadow: var(--shadow-xl); }
+
+  /* Radius */
+  .rounded-none { border-radius: var(--radius-none); }
+  .rounded-xs { border-radius: var(--radius-xs); }
+  .rounded-sm { border-radius: var(--radius-sm); }
+  .rounded-md { border-radius: var(--radius-md); }
+  .rounded-lg { border-radius: var(--radius-lg); }
+  .rounded-xl { border-radius: var(--radius-xl); }
+  .rounded-full { border-radius: var(--radius-full); }
+
+  /* Transitions */
+  .transition-fast { transition: all var(--transition-fast); }
+  .transition-base { transition: all var(--transition-base); }
+  .transition-slow { transition: all var(--transition-slow); }
+
+  /* Focus visible (accessible) */
+  .focus-ring:focus-visible {
+    outline: none;
+    box-shadow: var(--focus-ring);
+  }
+
+  .focus-ring-inset:focus-visible {
+    outline: none;
+    box-shadow: var(--focus-ring-inset);
+  }
+
+  /* Print hide */
+  .no-print { @media print { display: none !important; } }
+}
