@@ -1,0 +1,49 @@
+{
+  "name": "Chokur System",
+  "short_name": "Chokur",
+  "description": "Marks to decisions, instantly. KCSE grading, rankings, subject analysis, and report cards for Kenyan secondary schools. Works offline.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#F6F1E7",
+  "theme_color": "#F6F1E7",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/brand/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/brand/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/brand/icon-maskable-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ],
+  "categories": ["education", "productivity"],
+  "lang": "en-KE",
+  "dir": "ltr",
+  "shortcuts": [
+    {
+      "name": "Enter marks",
+      "short_name": "Marks",
+      "description": "Open marks entry for the active class",
+      "url": "/overview",
+      "icons": [{ "src": "/brand/icon-192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "Rankings",
+      "short_name": "Rankings",
+      "description": "View class rankings with C+ qualification line",
+      "url": "/rankings",
+      "icons": [{ "src": "/brand/icon-192.png", "sizes": "192x192" }]
+    }
+  ]
+}
