@@ -156,15 +156,24 @@ export function parseMarksCSV(
 
     if (!admVal && !nameVal) continue;
 
-    // Locate student in store - prioritize admNo, fallback to name with warning
+    // Locate student in store - require exact admNo match for security
     const matchedByAdmNo = admVal && students.find(s => s.admNo.toLowerCase() === admVal.toLowerCase());
-    const matchedByName = nameVal && !matchedByAdmNo && students.find(s => s.name.toLowerCase() === nameVal.toLowerCase());
 
-    if (!matchedByAdmNo && matchedByName) {
-      // Check for ambiguous name matches
+    // Fallback to name ONLY if admNo is provided and matches exactly one student
+    // This prevents accidental misassignment of marks
+    let matchedByName: Student | undefined;
+    if (!matchedByAdmNo && nameVal) {
       const nameMatches = students.filter(s => s.name.toLowerCase() === nameVal.toLowerCase());
-      if (nameMatches.length > 1) {
-        warnings.push(`Row ${r}: Name "${nameVal}" matches ${nameMatches.length} students. Using first match (AdmNo: ${nameMatches[0].admNo}).`);
+      if (nameMatches.length === 1) {
+        // Only allow name fallback if admin number column exists in CSV but was empty for this row
+        if (admColIdx >= 0 && admColIdx < rowCells.length && rowCells[admColIdx].trim() === '') {
+          matchedByName = nameMatches[0];
+        } else if (admColIdx === -1) {
+          // No admNo column at all - reject to prevent misassignment
+          warnings.push(`Row ${r}: No AdmNo column found. Cannot match "${nameVal}" by name alone for security.`);
+        }
+      } else if (nameMatches.length > 1) {
+        warnings.push(`Row ${r}: Name "${nameVal}" matches ${nameMatches.length} students. Rejected - requires exact AdmNo match.`);
       }
     }
 

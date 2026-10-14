@@ -682,7 +682,26 @@ export const useAppStore = create<AppState>()(
         };
 
         const jsonString = JSON.stringify(backupData, null, 2);
-        const blob = new Blob([jsonString], { type: 'application/json' });
+
+        // Add HMAC-SHA256 for integrity verification
+        const encoder = new TextEncoder();
+        const keyMaterial = await crypto.subtle.importKey(
+          'raw',
+          encoder.encode('chokur-backup-key-v2'),
+          { name: 'HMAC', hash: 'SHA-256' },
+          false,
+          ['sign']
+        );
+        const signature = await crypto.subtle.sign('HMAC', keyMaterial, encoder.encode(jsonString));
+        const signatureB64 = btoa(String.fromCharCode(...new Uint8Array(signature)));
+
+        const backupWithIntegrity = {
+          ...backupData,
+          integrity: signatureB64,
+        };
+
+        const finalJson = JSON.stringify(backupWithIntegrity, null, 2);
+        const blob = new Blob([finalJson], { type: 'application/json' });
         const url = URL.createObjectURL(blob);
         const link = document.createElement('a');
         link.href = url;
@@ -695,8 +714,69 @@ export const useAppStore = create<AppState>()(
 
       restoreBackup: async (jsonString) => {
         try {
-          const data = JSON.parse(jsonString);
-          if (!data.students || !data.subjects || !data.marks) {
+          // Enforce input size limit before parsing (prevents OOM on large payloads)
+          const MAX_JSON_SIZE = 5 * 1024 * 1024; // 5 MB
+          if (jsonString.length > MAX_JSON_SIZE) {
+            return false;
+          }
+
+          // Prevent prototype pollution via JSON.parse reviver
+          const data = JSON.parse(jsonString, (key, value) => {
+            if (key === '__proto__' || key === 'constructor' || key === 'prototype') {
+              return undefined;
+            }
+            return value;
+          });
+
+          // Verify HMAC integrity if present
+          if (data.integrity) {
+            const { integrity, ...backupData } = data;
+            const encoder = new TextEncoder();
+            const keyMaterial = await crypto.subtle.importKey(
+              'raw',
+              encoder.encode('chokur-backup-key-v2'),
+              { name: 'HMAC', hash: 'SHA-256' },
+              false,
+              ['verify']
+            );
+            const expectedSignature = Uint8Array.from(atob(integrity), c => c.charCodeAt(0));
+            const isValid = await crypto.subtle.verify(
+              'HMAC',
+              keyMaterial,
+              expectedSignature,
+              encoder.encode(JSON.stringify(backupData, null, 2))
+            );
+            if (!isValid) {
+              return false; // Integrity check failed
+            }
+            // Use backupData (without integrity field) for restore
+            Object.assign(data, backupData);
+          }
+
+          // Validate required structure and types (basic schema validation)
+          if (!data || typeof data !== 'object') {
+            return false;
+          }
+          if (!Array.isArray(data.students) || !Array.isArray(data.subjects)) {
+            return false;
+          }
+          if (data.marks && typeof data.marks !== 'object') {
+            return false;
+          }
+          // Validate student records have required fields
+          for (const s of data.students) {
+            if (!s.id || !s.admNo || !s.name || !s.stream) {
+              return false;
+            }
+          }
+          // Validate subject records have required fields
+          for (const s of data.subjects) {
+            if (!s.id || !s.code || !s.name || !s.department) {
+              return false;
+            }
+          }
+          // Enforce reasonable size limits
+          if (data.students.length > 5000 || data.subjects.length > 100) {
             return false;
           }
 
