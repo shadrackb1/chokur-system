@@ -1,0 +1,882 @@
+openapi: 3.0.3
+info:
+  title: Chokur System API
+  description: REST API for Chokur KCSE Academic Management Platform
+  version: 1.0.0
+  contact:
+    name: Chokur System
+    email: support@chokur.system
+servers:
+  - url: https://chokur-system.vercel.app/api/v1
+    description: Production server
+  - url: http://localhost:3000/api/v1
+    description: Development server
+
+security:
+  - ApiKeyAuth: []
+
+paths:
+  /students:
+    get:
+      summary: List all students
+      parameters:
+        - $ref: '#/components/parameters/SchoolId'
+        - $ref: '#/components/parameters/Stream'
+        - $ref: '#/components/parameters/Status'
+      responses:
+        '200':
+          description: List of students
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Student'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+    post:
+      summary: Create a new student
+      parameters:
+        - $ref: '#/components/parameters/SchoolId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/StudentInput'
+      responses:
+        '201':
+          description: Student created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Student'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+  /students/{id}:
+    get:
+      summary: Get a student by ID
+      parameters:
+        - $ref: '#/components/parameters/SchoolId'
+        - $ref: '#/components/parameters/StudentId'
+      responses:
+        '200':
+          description: Student details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Student'
+        '404':
+          $ref: '#/components/responses/NotFound'
+    put:
+      summary: Update a student
+      parameters:
+        - $ref: '#/components/parameters/SchoolId'
+        - $ref: '#/components/parameters/StudentId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/StudentInput'
+      responses:
+        '200':
+          description: Student updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Student'
+        '404':
+          $ref: '#/components/responses/NotFound'
+    delete:
+      summary: Delete a student
+      parameters:
+        - $ref: '#/components/parameters/SchoolId'
+        - $ref: '#/components/parameters/StudentId'
+      responses:
+        '204':
+          description: Student deleted
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  /subjects:
+    get:
+      summary: List all subjects
+      parameters:
+        - $ref: '#/components/parameters/SchoolId'
+      responses:
+        '200':
+          description: List of subjects
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Subject'
+
+  /exams:
+    get:
+      summary: List all exam periods
+      parameters:
+        - $ref: '#/components/parameters/SchoolId'
+      responses:
+        '200':
+          description: List of exams
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ExamPeriod'
+
+  /marks:
+    get:
+      summary: Get marks
+      parameters:
+        - $ref: '#/components/parameters/SchoolId'
+        - $ref: '#/components/parameters/StudentId'
+        - $ref: '#/components/parameters/ExamId'
+        - $ref: '#/components/parameters/SubjectCode'
+      responses:
+        '200':
+          description: List of marks
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Mark'
+    post:
+      summary: Create or update a mark
+      parameters:
+        - $ref: '#/components/parameters/SchoolId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MarkInput'
+      responses:
+        '201':
+          description: Mark created/updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Mark'
+
+  /rankings:
+    get:
+      summary: Get student rankings for a stream and exam
+      parameters:
+        - $ref: '#/components/parameters/SchoolId'
+        - $ref: '#/components/parameters/Stream'
+        - $ref: '#/components/parameters/ExamId'
+      responses:
+        '200':
+          description: Rankings computed on-the-fly
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Ranking'
+
+  /fee-balance:
+    get:
+      summary: Get fee balance for a student
+      parameters:
+        - $ref: '#/components/parameters/SchoolId'
+        - $ref: '#/components/parameters/StudentId'
+      responses:
+        '200':
+          description: Fee balance details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FeeBalance'
+
+  /fee-payments:
+    post:
+      summary: Record a fee payment
+      parameters:
+        - $ref: '#/components/parameters/SchoolId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FeePaymentInput'
+      responses:
+        '201':
+          description: Payment recorded
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FeePayment'
+
+  /announcements:
+    get:
+      summary: Get announcements
+      parameters:
+        - $ref: '#/components/parameters/SchoolId'
+        - $ref: '#/components/parameters/TargetRole'
+        - $ref: '#/components/parameters/Stream'
+      responses:
+        '200':
+          description: List of announcements
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Announcement'
+    post:
+      summary: Create an announcement
+      parameters:
+        - $ref: '#/components/parameters/SchoolId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AnnouncementInput'
+      responses:
+        '201':
+          description: Announcement created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Announcement'
+
+  /timetable:
+    get:
+      summary: Get timetable for a stream
+      parameters:
+        - $ref: '#/components/parameters/SchoolId'
+        - $ref: '#/components/parameters/Stream'
+      responses:
+        '200':
+          description: Timetable entries
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/TimetableEntry'
+
+  /quizzes:
+    get:
+      summary: Get published quizzes
+      parameters:
+        - $ref: '#/components/parameters/SchoolId'
+        - $ref: '#/components/parameters/SubjectCode'
+      responses:
+        '200':
+          description: List of quizzes
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Quiz'
+
+  /quiz-attempts:
+    post:
+      summary: Submit a quiz attempt
+      parameters:
+        - $ref: '#/components/parameters/SchoolId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/QuizAttemptInput'
+      responses:
+        '201':
+          description: Attempt recorded
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/QuizAttempt'
+
+components:
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      in: header
+      name: x-api-key
+      description: API key for authentication
+
+  parameters:
+    SchoolId:
+      name: school_id
+      in: query
+      required: true
+      schema:
+        type: string
+        format: uuid
+      description: School UUID
+    StudentId:
+      name: student_id
+      in: query
+      required: false
+      schema:
+        type: string
+        format: uuid
+      description: Student UUID
+    ExamId:
+      name: exam_id
+      in: query
+      required: false
+      schema:
+        type: string
+        format: uuid
+      description: Exam period UUID
+    SubjectCode:
+      name: subject_code
+      in: query
+      required: false
+      schema:
+        type: string
+      description: Subject code (e.g., MAT, ENG)
+    Stream:
+      name: stream
+      in: query
+      required: false
+      schema:
+        type: string
+      description: Stream name (e.g., Form 4 East)
+    Status:
+      name: status
+      in: query
+      required: false
+      schema:
+        type: string
+        enum: [Active, Inactive, Graduated, Transferred]
+      description: Student status filter
+    TargetRole:
+      name: target_role
+      in: query
+      required: false
+      schema:
+        type: string
+        enum: [admin, teacher, parent, student]
+      description: Filter announcements by target role
+
+  responses:
+    Unauthorized:
+      description: Invalid or missing API key
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    BadRequest:
+      description: Invalid request body
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    NotFound:
+      description: Resource not found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+
+  schemas:
+    Error:
+      type: object
+      properties:
+        error:
+          type: string
+          example: "Invalid API key"
+
+    Student:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        school_id:
+          type: string
+          format: uuid
+        adm_no:
+          type: string
+        name:
+          type: string
+        stream:
+          type: string
+        form:
+          type: string
+        gender:
+          type: string
+          enum: [Male, Female]
+        kcpe_marks:
+          type: integer
+        status:
+          type: string
+          enum: [Active, Inactive, Graduated, Transferred]
+        parent_id:
+          type: string
+          format: uuid
+        parent_phone:
+          type: string
+        parent_email:
+          type: string
+        date_of_birth:
+          type: string
+          format: date
+        admission_date:
+          type: string
+          format: date
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+
+    StudentInput:
+      type: object
+      required: [adm_no, name, stream, form, gender]
+      properties:
+        adm_no:
+          type: string
+        name:
+          type: string
+        stream:
+          type: string
+        form:
+          type: string
+        gender:
+          type: string
+          enum: [Male, Female]
+        kcpe_marks:
+          type: integer
+          default: 0
+        status:
+          type: string
+          enum: [Active, Inactive, Graduated, Transferred]
+          default: Active
+        parent_id:
+          type: string
+          format: uuid
+        parent_phone:
+          type: string
+        parent_email:
+          type: string
+        date_of_birth:
+          type: string
+          format: date
+
+    Subject:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        school_id:
+          type: string
+          format: uuid
+        code:
+          type: string
+        name:
+          type: string
+        department:
+          type: string
+        entered:
+          type: integer
+        last_exam_mean:
+          type: number
+        teacher_id:
+          type: string
+          format: uuid
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+
+    ExamPeriod:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        school_id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        term:
+          type: string
+        year:
+          type: integer
+        type:
+          type: string
+          enum: [Mid-term, End-term, Mock]
+        start_date:
+          type: string
+          format: date
+        end_date:
+          type: string
+          format: date
+        is_active:
+          type: boolean
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+
+    Mark:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        school_id:
+          type: string
+          format: uuid
+        student_id:
+          type: string
+          format: uuid
+        subject_code:
+          type: string
+        exam_id:
+          type: string
+          format: uuid
+        value:
+          type: number
+        entered_by:
+          type: string
+          format: uuid
+        entered_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+
+    MarkInput:
+      type: object
+      required: [student_id, subject_code, exam_id, entered_by]
+      properties:
+        student_id:
+          type: string
+          format: uuid
+        subject_code:
+          type: string
+        exam_id:
+          type: string
+          format: uuid
+        value:
+          type: number
+        entered_by:
+          type: string
+          format: uuid
+
+    Ranking:
+      type: object
+      properties:
+        student:
+          $ref: '#/components/schemas/Student'
+        average:
+          type: number
+        passed:
+          type: integer
+        subjectsCount:
+          type: integer
+        rank:
+          type: integer
+
+    FeeBalance:
+      type: object
+      properties:
+        expected:
+          type: number
+        paid:
+          type: number
+        balance:
+          type: number
+        structures:
+          type: array
+          items:
+            $ref: '#/components/schemas/FeeStructure'
+        payments:
+          type: array
+          items:
+            $ref: '#/components/schemas/FeePayment'
+
+    FeeStructure:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        school_id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        form:
+          type: string
+        term:
+          type: string
+        year:
+          type: integer
+        amount:
+          type: number
+        due_date:
+          type: string
+          format: date
+        description:
+          type: string
+        is_active:
+          type: boolean
+
+    FeePayment:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        school_id:
+          type: string
+          format: uuid
+        student_id:
+          type: string
+          format: uuid
+        fee_structure_id:
+          type: string
+          format: uuid
+        amount_paid:
+          type: number
+        payment_method:
+          type: string
+          enum: [mpesa, cash, bank, card, cheque]
+        mpesa_code:
+          type: string
+        paid_at:
+          type: string
+          format: date-time
+        received_by:
+          type: string
+          format: uuid
+        status:
+          type: string
+          enum: [pending, completed, failed, refunded]
+
+    FeePaymentInput:
+      type: object
+      required: [student_id, fee_structure_id, amount_paid, payment_method, received_by]
+      properties:
+        student_id:
+          type: string
+          format: uuid
+        fee_structure_id:
+          type: string
+          format: uuid
+        amount_paid:
+          type: number
+        payment_method:
+          type: string
+          enum: [mpesa, cash, bank, card, cheque]
+        mpesa_code:
+          type: string
+        received_by:
+          type: string
+          format: uuid
+
+    Announcement:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        school_id:
+          type: string
+          format: uuid
+        author_id:
+          type: string
+          format: uuid
+        title:
+          type: string
+        content:
+          type: string
+        target_roles:
+          type: array
+          items:
+            type: string
+            enum: [admin, teacher, parent, student]
+        target_streams:
+          type: array
+          items:
+            type: string
+        priority:
+          type: string
+          enum: [low, normal, high, urgent]
+        published_at:
+          type: string
+          format: date-time
+        expires_at:
+          type: string
+          format: date-time
+        is_published:
+          type: boolean
+
+    AnnouncementInput:
+      type: object
+      required: [title, content, author_id]
+      properties:
+        title:
+          type: string
+        content:
+          type: string
+        target_roles:
+          type: array
+          items:
+            type: string
+            enum: [admin, teacher, parent, student]
+          default: [student, parent]
+        target_streams:
+          type: array
+          items:
+            type: string
+        priority:
+          type: string
+          enum: [low, normal, high, urgent]
+          default: normal
+        expires_at:
+          type: string
+          format: date-time
+
+    TimetableEntry:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        school_id:
+          type: string
+          format: uuid
+        stream:
+          type: string
+        subject_code:
+          type: string
+        teacher_id:
+          type: string
+          format: uuid
+        day_of_week:
+          type: integer
+          minimum: 0
+          maximum: 6
+        period:
+          type: integer
+          minimum: 1
+          maximum: 12
+        start_time:
+          type: string
+          format: time
+        end_time:
+          type: string
+          format: time
+        room:
+          type: string
+        is_active:
+          type: boolean
+
+    Quiz:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        school_id:
+          type: string
+          format: uuid
+        teacher_id:
+          type: string
+          format: uuid
+        subject_code:
+          type: string
+        title:
+          type: string
+        description:
+          type: string
+        questions:
+          type: array
+          items:
+            type: string
+            format: uuid
+        time_limit_minutes:
+          type: integer
+        max_attempts:
+          type: integer
+        start_at:
+          type: string
+          format: date-time
+        end_at:
+          type: string
+          format: date-time
+        is_published:
+          type: boolean
+
+    QuizAttempt:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        school_id:
+          type: string
+          format: uuid
+        quiz_id:
+          type: string
+          format: uuid
+        student_id:
+          type: string
+          format: uuid
+        answers:
+          type: array
+          items:
+            type: integer
+        score:
+          type: integer
+        percentage:
+          type: number
+        started_at:
+          type: string
+          format: date-time
+        completed_at:
+          type: string
+          format: date-time
+        time_spent_seconds:
+          type: integer
+
+    QuizAttemptInput:
+      type: object
+      required: [quiz_id, student_id, answers]
+      properties:
+        quiz_id:
+          type: string
+          format: uuid
+        student_id:
+          type: string
+          format: uuid
+        answers:
+          type: array
+          items:
+            type: integer
+        score:
+          type: integer
+        percentage:
+          type: number
+        time_spent_seconds:
+          type: integer
+          default: 0

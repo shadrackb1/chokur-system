@@ -1,0 +1,65 @@
+{
+  "appId": "com.chokur.system",
+  "appName": "Chokur System",
+  "webDir": "dist",
+  "server": {
+    "url": "https://chokur-system.vercel.app",
+    "cleartext": false
+  },
+  "android": {
+    "buildOptions": {
+      "keystorePath": "release.keystore",
+      "keystoreAlias": "chokur",
+      "keystorePassword": "env:KEYSTORE_PASSWORD",
+      "keyPassword": "env:KEY_PASSWORD"
+    },
+    "permissions": [
+      "INTERNET",
+      "ACCESS_NETWORK_STATE",
+      "CAMERA",
+      "READ_EXTERNAL_STORAGE",
+      "WRITE_EXTERNAL_STORAGE",
+      "VIBRATE",
+      "RECEIVE_BOOT_COMPLETED",
+      "FOREGROUND_SERVICE"
+    ],
+    "minSdkVersion": 21,
+    "targetSdkVersion": 34,
+    "compileSdkVersion": 34
+  },
+  "ios": {
+    "contentInset": "automatic",
+    "scrollEnabled": true,
+    "limitsNavigationsToAppBoundDomains": true,
+    "preferredContentMode": "mobile",
+    "scheme": "https",
+    "backgroundColor": "#FEF9EF",
+    "minVersion": "15.0"
+  },
+  "plugins": {
+    "SplashScreen": {
+      "launchShowDuration": 2000,
+      "backgroundColor": "#FEF9EF",
+      "androidScaleType": "CENTER_CROP",
+      "showSpinner": false
+    },
+    "StatusBar": {
+      "style": "dark",
+      "backgroundColor": "#FEF9EF"
+    },
+    "LocalNotifications": {
+      "smallIcon": "ic_stat_chokur",
+      "iconColor": "#C2410C",
+      "sound": "beep.wav"
+    },
+    "PushNotifications": {
+      "presentationOptions": ["badge", "sound", "alert"]
+    },
+    "CapacitorHttp": {
+      "enabled": true
+    },
+    "Filesystem": {
+      "iosUseLegacy": false
+    }
+  }
+}
